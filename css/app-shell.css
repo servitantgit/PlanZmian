@@ -1465,7 +1465,8 @@ body.compact-cells .info-section {
   border-color: var(--text-main);
 }
 
-#factoryEditorExitBtn {
+#factoryEditorExitBtn,
+#factoryEditorPublishBtn {
   width: 36px;
   height: 36px;
   border: none;
@@ -1478,11 +1479,26 @@ body.compact-cells .info-section {
   align-items: center;
   justify-content: center;
   transition: background 0.15s ease;
+  margin-left: 6px;
+}
+
+#factoryEditorPublishBtn {
+  width: auto;
+  min-width: 36px;
+  padding: 0 10px;
+  font-size: 16px;
+  font-weight: 700;
+  gap: 4px;
 }
 
 #factoryEditorExitBtn:hover {
   background: var(--bg-danger);
   color: var(--text-danger);
+}
+
+#factoryEditorPublishBtn:hover {
+  background: var(--bg-info);
+  color: var(--text-header);
 }
 
 /* === ACTIVE FACTORY EDITOR VISUAL STATE === */
@@ -1544,6 +1560,12 @@ body.factory-editor-active #factoryEditorExitBtn {
   color: #c0392b;
 }
 
+body.factory-editor-active #factoryEditorPublishBtn {
+  border: 1px solid rgba(39, 174, 96, 0.55);
+  background: rgba(39, 174, 96, 0.14);
+  color: #1e8449;
+}
+
 body.factory-editor-active .mobile-bottom-nav {
   display: none;
 }
@@ -1574,9 +1596,16 @@ body.factory-editor-active {
   }
 
   body.factory-editor-active .factory-tool-btn,
-  body.factory-editor-active #factoryEditorExitBtn {
+  body.factory-editor-active #factoryEditorExitBtn,
+  body.factory-editor-active #factoryEditorPublishBtn {
     width: 40px;
     height: 40px;
+  }
+
+  body.factory-editor-active #factoryEditorPublishBtn {
+    width: auto;
+    min-width: 40px;
+    padding: 0 12px;
   }
 
   body.factory-editor-active {

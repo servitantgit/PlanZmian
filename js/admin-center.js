@@ -201,6 +201,20 @@ function bindFactoryEditorBar() {
       activateFactoryPaintTool(tool);
     };
   });
+  const publishBtn = document.getElementById('factoryEditorPublishBtn');
+  if (publishBtn) {
+    publishBtn.title = t('adminPublishBtn') || 'Publish';
+    publishBtn.setAttribute('aria-label', t('adminPublishBtn') || 'Publish');
+    publishBtn.onclick = (e) => {
+      e.preventDefault();
+      const year = factoryPaintYear || (typeof currentYear === 'number' ? currentYear : null);
+      if (!year) {
+        showToast('error', t('adminInvalidYear') || 'Invalid year');
+        return;
+      }
+      publishFactoryScheduleYear(year);
+    };
+  }
   const exitBtn = document.getElementById('factoryEditorExitBtn');
   if (exitBtn) {
     exitBtn.onclick = (e) => {
