@@ -502,12 +502,19 @@ body.action-sheet-open {
   flex: 0 0 auto;
 }
 .top-bar-title {
-  flex: 1 1 auto;
+  /* Absolutely centered against the whole top bar (not just the space
+     left over by the two buttons) — guaranteed optical centering. */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: calc(100% - 2 * (42px + 12px));
   min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  pointer-events: none;
 }
 #appContextTitle {
   flex: 0 1 auto;
@@ -522,8 +529,8 @@ body.action-sheet-open {
 }
 #menuBtn {
   order: 3;
-  /* no margin-left:auto — it would eat the free space and push the title off-center;
-     .top-bar-title (flex:1) already centers the app name between the two buttons */
+  /* no margin-left:auto — the title is centered absolutely, the menu button
+     must stay pinned to the right edge */
   flex: 0 0 auto;
 }
 
