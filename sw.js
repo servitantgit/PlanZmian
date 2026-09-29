@@ -91,10 +91,18 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-/* === FETCH: cache first, revalidate in background (stale-while-revalidate) ===
-   A cached response is returned immediately (fast, offline-safe) while a fresh
-   copy is fetched and written to the cache for the NEXT load. Network is only
-   awaited when nothing is cached yet. */
+/* === FETCH ===
+   Strategy per resource type:
+
+   • App shell (navigations, index.html, css/, js/) — NETWORK FIRST.
+     The old cache-first strategy served the app shell from Cache Storage, and
+     because the cache name only changes when `sw.js` itself changes (its
+     `__BUILD_ID__` placeholder is substituted in CI), a new deploy was
+     invisible until the worker was unregistered by hand. Network-first fixes
+     that: a fresh copy is always used when online, the cache is only the
+     offline fallback.
+   • Everything else (icons, images, fonts) — CACHE FIRST + background
+     revalidate (stale-while-revalidate), because those files are immutable. */
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
@@ -114,6 +122,35 @@ self.addEventListener('fetch', (event) => {
         return fetch(event.request).catch(() => new Response(null, { status: 504 }));
       }
 
+      // Same-origin app shell → network first.
+      const isShellRequest =
+        event.request.mode === 'navigate' ||
+        /\/(css|js)\//.test(url.pathname) ||
+        /\/index\.html$/.test(url.pathname) ||
+        url.pathname === '/' ||
+        url.pathname === '';
+
+      if (isShellRequest) {
+        return fetch(event.request)
+          .then((response) => {
+            if (response && response.status === 200 && response.type === 'basic') {
+              const clone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+            }
+            return response;
+          })
+          .catch(() =>
+            caches.match(event.request).then((cached) => {
+              if (cached) return cached;
+              if (event.request.mode === 'navigate') {
+                return caches.match('./index.html').then((fallback) => fallback || Response.error());
+              }
+              return Response.error();
+            })
+          );
+      }
+
+      // Static, immutable assets → cache first, revalidate in background.
       return caches.match(event.request).then((cached) => {
         const fetchPromise = fetch(event.request)
           .then((response) => {
