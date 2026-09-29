@@ -121,8 +121,75 @@ function registerServiceWorker() {
       refreshing = true;
       window.location.reload();
     });
+
+    // Answer from the worker after a PURGE_ALL request.
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'PURGE_DONE') {
+        console.info('[PWA] Caches purged, reloading…');
+        window.location.reload();
+      }
+    });
+
+    // Drop leftover registrations from older scopes/builds. More than one
+    // registration for the same origin means a stale worker may still be
+    // serving the app shell next to the current one.
+    if (navigator.serviceWorker.getRegistrations) {
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((regs) => {
+          if (regs.length <= 1) return;
+          console.warn('[PWA] Multiple service worker registrations:', regs);
+          // Keep the registration that owns the currently active worker
+          // (same script URL as the one we just registered), drop the rest.
+          const current =
+            regs.find((r) => r.active && reg.active && r.active.scriptURL === reg.active.scriptURL) ||
+            regs.find((r) => r.active) ||
+            regs[0];
+          regs.forEach((r) => {
+            if (r !== current) r.unregister().catch(() => {});
+          });
+        })
+        .catch(() => {});
+    }
   });
 }
+
+/* === HARD RESET: unregister EVERY worker + delete EVERY cache ===
+   Unregistering a single registration in DevTools can leave another one alive
+   (e.g. an older scope). This nukes all of them and reloads, so the next load
+   starts from a clean, network-driven state. */
+window.purgeServiceWorkersAndCaches = function () {
+  if (!('serviceWorker' in navigator)) {
+    window.location.reload();
+    return;
+  }
+
+  // 1) Ask the active worker to purge from its side too.
+  const controller = navigator.serviceWorker.controller;
+  if (controller) {
+    try {
+      controller.postMessage({ type: 'PURGE_ALL' });
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  // 2) Unregister every registration for this origin.
+  navigator.serviceWorker
+    .getRegistrations()
+    .then((regs) => Promise.all(regs.map((reg) => reg.unregister())))
+    .catch(() => {});
+
+  // 3) Delete every cache of this origin.
+  if (window.caches && caches.keys) {
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+      .catch(() => {});
+  }
+
+  setTimeout(() => window.location.reload(), 600);
+};
 
 /* === Toast with an "Update" button === */
 function promptUserToUpdate(waitingSW) {

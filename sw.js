@@ -205,7 +205,37 @@ self.addEventListener('notificationclick', (event) => {
 });
 /* === MESSAGE: handling commands from the client === */
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+  const data = event.data || {};
+
+  if (data.type === 'SKIP_WAITING') {
     self.skipWaiting();
+    return;
+  }
+
+  // Hard reset: drop EVERY cache of this origin and unregister this worker.
+  // Needed when a stale worker from an older scope/build keeps serving the app
+  // shell — unregistering a single registration in DevTools may leave another
+  // one active, and this removes all of them from the worker side as well.
+  if (data.type === 'PURGE_ALL') {
+    event.waitUntil(
+      (async function purge() {
+        try {
+          const keys = await caches.keys();
+          await Promise.all(keys.map((key) => caches.delete(key)));
+        } catch (e) {
+          /* ignore */
+        }
+        try {
+          await self.registration.unregister();
+        } catch (e) {
+          /* ignore */
+        }
+        const clientList = await clients.matchAll({
+          type: 'window',
+          includeUncontrolled: true,
+        });
+        clientList.forEach((client) => client.postMessage({ type: 'PURGE_DONE' }));
+      })()
+    );
   }
 });
