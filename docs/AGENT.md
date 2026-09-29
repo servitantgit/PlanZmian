@@ -179,30 +179,32 @@ Expected current order:
 2. `js/schedules/_registry.js`
 3. `js/schedules/gillette/metadata.js`
 4. `js/schedules/gillette/2026.js`
-5. `js/personal/sync-tracking.js`
-6. `js/personal/notes-tracking.js`
-7. `js/overtime-logic.js`
-8. `js/core.js`
-9. `js/ui.js`
-10. `js/edit.js`
-11. `js/dashboard.js`
-12. `js/smart-popup.js`
-13. `js/calendar.js`
-14. `js/views.js`
-15. `js/actions.js`
-16. `js/pwa.js`
-17. `js/sync.js`
-18. `js/admin.js`
-19. `js/i18n/pl.js`
-20. `js/i18n/en.js`
-21. `js/i18n/uk.js`
-22. `js/i18n/i18n.js`
-23. `js/personalization.js`
-24. `js/app-shell.js`
-25. `js/settings.js`
-26. `js/admin-center.js`
-27. `js/notes-view.js`
-28. `js/main.js`
+5. `js/schedules/remote.js` (remote factory schedule; loads BEFORE `core.js`
+   so the cached server schedule can be applied synchronously)
+6. `js/personal/sync-tracking.js`
+7. `js/personal/notes-tracking.js`
+8. `js/overtime-logic.js`
+9. `js/core.js`
+10. `js/ui.js`
+11. `js/edit.js`
+12. `js/dashboard.js`
+13. `js/smart-popup.js`
+14. `js/calendar.js`
+15. `js/views.js`
+16. `js/actions.js`
+17. `js/pwa.js`
+18. `js/sync.js`
+19. `js/admin.js`
+20. `js/i18n/pl.js`
+21. `js/i18n/en.js`
+22. `js/i18n/uk.js`
+23. `js/i18n/i18n.js`
+24. `js/personalization.js`
+25. `js/app-shell.js`
+26. `js/settings.js`
+27. `js/admin-center.js`
+28. `js/notes-view.js`
+29. `js/main.js`
 
 `main.js` must remain last.
 
@@ -212,6 +214,7 @@ Expected current order:
 | --------------------------- | --------------------------------------------------------- |
 | `js/schedules/_core.js`     | shared constants, storage keys, dates, holidays           |
 | `js/schedules/_registry.js` | schedule registry, public schedule aliases, Privacy Mode  |
+| `js/schedules/remote.js`    | read-only factory schedule from Cloudflare D1 (Phase 1)    |
 | `js/core.js`                | localStorage and schedule business logic                  |
 | `js/edit.js`                | immediate personal schedule override helper               |
 | `js/calendar.js`            | month calendar, selected-day details, overtime modal      |
@@ -499,6 +502,39 @@ Stored in:
     js/schedules/gillette/YYYY.js
 
 Public schedule data is git-tracked and visible to everyone. Do not modify `js/schedules/gillette/2026.js` during UI or infrastructure tasks. Any schedule-data correction requires explicit owner confirmation.
+
+### 7.1a Remote factory schedule (branch `cloudflare`, Phase 1, READ-ONLY)
+
+On branch `cloudflare` the public factory schedule can additionally come from
+Cloudflare D1. Spec: `docs/ADMIN_BACKEND_SPEC.md`; details in
+`docs/PROJECT_DOCS.md` §3.2.
+
+- Server: `functions/api/schedule.js` — Pages Function (ES module, the ONLY
+  place where ES modules are allowed), public `GET /api/schedule`,
+  `Cache-Control: no-cache` + `ETag` / `If-None-Match` → `304`,
+  empty DB → `200 { years: {} }`, missing `env.DB` / DB error →
+  `503 { error: 'unavailable' }`. `updatedBy` must never appear in a response.
+- Database: `migrations/0001_init.sql` (`schedule_years`, `schedule_history`).
+  `schedule_id` is always `gillette`. Migrations are applied by the owner
+  manually; do NOT create `wrangler.toml`.
+- Client: `js/schedules/remote.js` (classic script, after
+  `js/schedules/gillette/<year>.js`, before `js/core.js`). It applies
+  `localStorage['planzmian_remote_schedule_v1']` synchronously at load, then
+  fetches `/api/schedule` with `{ cache: 'no-store' }` and applies newer
+  revisions through `registerYearData('gillette', ...)`, updating
+  `factorySchedule` / `factoryMonthHours` IN PLACE.
+- Service Worker: `/api/*` must never be served cache-first;
+  `/api/admin/*` must never be cached. `CACHE_NAME` and the `activate` logic
+  must not be changed.
+- New localStorage key: `planzmian_remote_schedule_v1` only. Never rename the
+  `gillette_*` / `grafik_*` keys.
+- Seed: `tools/seed-schedule.mjs` → `migrations/seed_2026.sql`
+  (`revision = 1`, `updated_by = 'seed'`). Hours are copied VERBATIM from
+  `2026.js` and never recomputed (October / brigade A = 160 is intentional).
+- Phase 2 (PUT / auth / Publish) and Phase 3 (history / rollback) are out of
+  scope until Dancer requests them. `js/schedules/remote.js` never writes.
+- Failure policy: any network/parse error is silently ignored; the app must
+  behave exactly as before (static `2026.js` + local cache).
 
 ### 7.2 Personal schedule overrides
 

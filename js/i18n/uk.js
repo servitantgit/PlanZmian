@@ -756,6 +756,7 @@ window.translations.uk = {
   menuPrivacyOff: 'Режим приватності: вимкнено',
   privacyOnToast: '🔒 Показано лише заводський графік',
   privacyOffToast: '👤 Показано персональні дані',
+  toastScheduleUpdatedRemote: '📅 Графік оновлено',
   editNeedPrivacyOff: '🔒 Вимкніть режим приватності в меню, щоб редагувати',
   syncStatusOkShort: '✓ Синхронізовано',
   syncStatusOk: 'Усі зміни збережено · {time}',

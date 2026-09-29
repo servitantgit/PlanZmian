@@ -756,6 +756,7 @@ window.translations.pl = {
   menuPrivacyOff: 'Tryb prywatności: wyłączony',
   privacyOnToast: '🔒 Widoczny tylko grafikk fabryczny',
   privacyOffToast: '👤 Widoczne dane osobiste',
+  toastScheduleUpdatedRemote: '📅 Grafik zaktualizowany',
   editNeedPrivacyOff: '🔒 Wyłącz tryb prywatności w menu, aby edytować',
   syncStatusOkShort: '✓ Zsynchronizowano',
   syncStatusOk: 'Wszystkie zmiany zapisane · {time}',

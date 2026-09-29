@@ -39,29 +39,30 @@ The script order in `index.html` is significant.
 3. `js/schedules/_registry.js`
 3. `js/schedules/gillette/metadata.js`
 4. `js/schedules/gillette/2026.js`
-5. `js/personal/sync-tracking.js`
-6. `js/personal/notes-tracking.js`
-7. `js/overtime-logic.js`
-8. `js/core.js`
-9. `js/ui.js`
-10. `js/edit.js`
-11. `js/dashboard.js`
-12. `js/smart-popup.js`
-13. `js/calendar.js`
-14. `js/views.js`
-15. `js/actions.js`
-16. `js/pwa.js`
-17. `js/sync.js`
-18. `js/admin.js`
-19. `js/i18n/pl.js`
-20. `js/i18n/en.js`
-21. `js/i18n/uk.js`
-22. `js/i18n/i18n.js`
-23. `js/personalization.js`
-24. `js/app-shell.js`
-25. `js/settings.js`
-26. `js/admin-center.js`
-27. `js/main.js`
+5. `js/schedules/remote.js` (remote factory schedule from Cloudflare D1)
+6. `js/personal/sync-tracking.js`
+7. `js/personal/notes-tracking.js`
+8. `js/overtime-logic.js`
+9. `js/core.js`
+10. `js/ui.js`
+11. `js/edit.js`
+12. `js/dashboard.js`
+13. `js/smart-popup.js`
+14. `js/calendar.js`
+15. `js/views.js`
+16. `js/actions.js`
+17. `js/pwa.js`
+18. `js/sync.js`
+19. `js/admin.js`
+20. `js/i18n/pl.js`
+21. `js/i18n/en.js`
+22. `js/i18n/uk.js`
+23. `js/i18n/i18n.js`
+24. `js/personalization.js`
+25. `js/app-shell.js`
+26. `js/settings.js`
+27. `js/admin-center.js`
+28. `js/main.js`
 
 `main.js` must remain last because it initializes application state and renders
 the initial view.
@@ -93,8 +94,60 @@ All personal data is stored locally first. Storage keys are defined in
 | `grafik_drive_file_id`        | Google Drive app-data file ID           |
 | `grafik_drive_user_email`     | Cached signed-in email                  |
 | `grafik_drive_had_session`    | Local Drive session marker              |
+| `planzmian_remote_schedule_v1` | Cached remote (Cloudflare D1) factory schedule |
 
 Never commit browser localStorage content to git.
+
+### 3.2 Remote factory schedule (Cloudflare D1, Phase 1, read-only)
+
+Branch `cloudflare` adds a read-only backend for the **factory** schedule
+(spec: `docs/ADMIN_BACKEND_SPEC.md`, Phase 1 + 1.5). Personal data and Drive
+sync are unchanged.
+
+- `migrations/0001_init.sql` — D1 schema: `schedule_years` and
+  `schedule_history`. `schedule_id` is always `'gillette'`.
+  Migrations are applied manually in Cloudflare (no `wrangler.toml` in repo).
+- `functions/api/schedule.js` — Cloudflare Pages Function (ES module,
+  `GET /api/schedule`, public, no auth):
+  - `200 { scheduleId, generatedAt, years: { "2026": { revision, updatedAt,
+    data, hours } } }`; `updatedBy` (admin e-mail) is never exposed;
+  - `Cache-Control: no-cache` + `ETag` (max revision + year count);
+    `If-None-Match` → `304`;
+  - empty DB → `200 { years: {} }` (not an error);
+  - missing `env.DB` binding or any DB failure → `503 { error: 'unavailable' }`
+    with no details logged.
+- `js/schedules/remote.js` — classic client script, loaded right after
+  `js/schedules/gillette/2026.js` and before `js/core.js`:
+  - synchronously applies `localStorage['planzmian_remote_schedule_v1']`
+    during load, so the first render already shows the last known server
+    schedule (offline-safe);
+  - asynchronously `fetch('/api/schedule', { cache: 'no-store' })`, applies
+    newer revisions via `registerYearData('gillette', year, data, hours)`,
+    writes the cache, then `refreshViews()` + a non-intrusive toast
+    (`toastScheduleUpdatedRemote`) — suppressed for the first application
+    after a cold start;
+  - the `factorySchedule` / `factoryMonthHours` alias objects are updated
+    IN PLACE (never re-assigned), so all readers keep working;
+  - light client-side validation mirrors the server rules: months `1`–`12`,
+    brigades `A/B/C/D`, array length = days in month, values only
+    `'' | 'R' | 'P' | 'N'` (`'W'` is rejected — the paint tool writes `''`);
+    an invalid year is skipped, the rest is applied;
+  - re-checks on `visibilitychange` (at most once per 60 s) and on `online`;
+    any network/parse error is silently ignored (`console.warn` without data).
+- `sw.js` — `./js/schedules/remote.js` added to `ASSETS`; requests whose
+  `pathname` starts with `/api/` are never served cache-first, and
+  `/api/admin/*` is never cached. `CACHE_NAME` / `activate` untouched.
+- `tools/seed-schedule.mjs` — one-off seed. Loads
+  `js/schedules/gillette/2026.js` through `node:vm` with
+  `registerSchedule`/`registerYearData` stubs and writes
+  `migrations/seed_2026.sql` (`revision = 1`, `updated_by = 'seed'`).
+  **Hours are copied verbatim from the file and never recomputed**
+  (October / brigade A = 160 on purpose).
+  Run: `node tools/seed-schedule.mjs` (`--print` to stdout only).
+
+`js/schedules/gillette/2026.js` stays as the static fallback: with an empty DB
+or an unreachable API the app behaves exactly as before. Phase 2 (Publish /
+PUT / auth) and Phase 3 (history / rollback) are NOT implemented here.
 
 ### 3.1 Preferences
 

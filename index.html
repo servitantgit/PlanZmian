@@ -358,6 +358,9 @@
   <script src="js/schedules/_registry.js"></script>
   <script src="js/schedules/gillette/metadata.js"></script>
   <script src="js/schedules/gillette/2026.js"></script>
+  <!-- Remote factory schedule (Cloudflare D1, read-only). Loads BEFORE core.js
+       so the cached server schedule can be applied synchronously. -->
+  <script src="js/schedules/remote.js"></script>
   <script src="js/personal/sync-tracking.js"></script>
   <script src="js/personal/notes-tracking.js"></script>
   <script src="js/overtime-logic.js"></script>

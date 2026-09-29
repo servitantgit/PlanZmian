@@ -755,6 +755,7 @@ window.translations.en = {
   menuPrivacyOff: 'Privacy mode: off',
   privacyOnToast: '🔒 Factory schedule only',
   privacyOffToast: '👤 Personal data visible',
+  toastScheduleUpdatedRemote: '📅 Schedule updated',
   editNeedPrivacyOff: '🔒 Turn off privacy mode in the menu to edit',
   syncStatusOkShort: '✓ Synced',
   syncStatusOk: 'All changes saved · {time}',

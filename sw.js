@@ -22,6 +22,7 @@ const ASSETS = [
   './js/schedules/_registry.js',
   './js/schedules/gillette/metadata.js',
   './js/schedules/gillette/2026.js',
+  './js/schedules/remote.js',
   './js/personal/sync-tracking.js',
   './js/personal/notes-tracking.js',
   './js/overtime-logic.js',
@@ -102,18 +103,30 @@ self.addEventListener('fetch', (event) => {
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const fetchPromise = fetch(event.request)
-        .then((response) => {
-          if (response && response.status === 200 && response.type === 'basic') {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        })
-        .catch(() => cached);
-      return cached || fetchPromise;
-    })
+    (function handleRequest() {
+      // API traffic must never be served stale from the cache-first strategy:
+      // for /api/* the client keeps its own localStorage copy, and /api/admin/*
+      // must never be cached at all.
+      if (url.pathname.indexOf('/api/') === 0) {
+        if (url.pathname.indexOf('/api/admin/') === 0) {
+          return fetch(event.request);
+        }
+        return fetch(event.request).catch(() => new Response(null, { status: 504 }));
+      }
+
+      return caches.match(event.request).then((cached) => {
+        const fetchPromise = fetch(event.request)
+          .then((response) => {
+            if (response && response.status === 200 && response.type === 'basic') {
+              const clone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+            }
+            return response;
+          })
+          .catch(() => cached);
+        return cached || fetchPromise;
+      });
+    })()
   );
 });
 
