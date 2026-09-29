@@ -533,13 +533,15 @@ function initGDriveTokenClient() {
 
 /**
  * Request a new access token.
- * @param {{ interactive?: boolean }} opts
+ * @param {{ interactive?: boolean, forceIdentityScope?: boolean }} opts
  *   interactive true → user-initiated; Google shows UI only if needed
  *   interactive false → prompt:'' (no UI when possible)
+ *   forceIdentityScope true → always request openid email (admin API path 7.4)
  * @returns {Promise<boolean>}
  */
 function requestDriveAccessToken(opts) {
   const interactive = !!(opts && opts.interactive);
+  const forceIdentityScope = !!(opts && opts.forceIdentityScope);
   if (!gDriveTokenClient) initGDriveTokenClient();
   if (!gDriveTokenClient) return Promise.resolve(false);
 
@@ -558,7 +560,11 @@ function requestDriveAccessToken(opts) {
     // second "app wants access / make sure you trust this app" screen.
     // Scope is set per call so the identity scope disappears from every
     // request once the e-mail is known; prompt:'' means "no UI if possible".
-    const cfg = { scope: getRequestedScope(), include_granted_scopes: true };
+    // forceIdentityScope: admin publish when server returns email_scope_required.
+    const scope = forceIdentityScope
+      ? DRIVE_SCOPE + ' ' + IDENTITY_SCOPE
+      : getRequestedScope();
+    const cfg = { scope: scope, include_granted_scopes: true };
     if (!interactive) cfg.prompt = '';
     gDriveTokenClient.requestAccessToken(cfg);
   } catch (e) {
@@ -2309,6 +2315,8 @@ window.isDriveLoggedIn = isDriveLoggedIn;
 window.isDriveTokenValid = isDriveTokenValid;
 window.hadDriveSession = hadDriveSession;
 window.ensureDriveToken = ensureDriveToken;
+window.requestDriveAccessToken = requestDriveAccessToken;
+window.driveFeatureOn = driveFeatureOn;
 window.updateMenuSyncStatus = updateMenuSyncStatus;
 window.checkDriveRemoteStatus = checkDriveRemoteStatus;
 

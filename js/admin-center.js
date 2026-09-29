@@ -852,6 +852,18 @@ function bindFactoryEditorTab(root) {
       else if (typeof window.closeAppPanel === 'function') window.closeAppPanel();
     };
   }
+  const publishBtn = root.querySelector('#factoryPublishBtn');
+  if (publishBtn) {
+    publishBtn.onclick = () => {
+      const picker = root.querySelector('#factoryYearPicker');
+      const year = picker ? parseInt(picker.value, 10) : new Date().getFullYear();
+      if (!year || isNaN(year)) {
+        showToast('error', t('adminInvalidYear') || 'Invalid year');
+        return;
+      }
+      publishFactoryScheduleYear(year);
+    };
+  }
   const exportBtn = root.querySelector('#factoryExportBtn');
   if (exportBtn) {
     exportBtn.onclick = () => {
@@ -891,7 +903,7 @@ function renderFactoryEditorTab() {
           <li>${t('factoryEditorStep2') || 'Click \\"Start editing\\" to activate factory painting mode'}</li>
           <li>${t('factoryEditorStep3') || 'Use R/P/N/W keys or toolbar buttons to paint shifts'}</li>
           <li>${t('factoryEditorStep4') || 'Changes are saved automatically as drafts'}</li>
-          <li>${t('factoryEditorStep5') || 'When ready, click \\"Export\\" to publish for all users'}</li>
+          <li>${t('factoryEditorStep5') || 'When ready, click \\"Publish\\" — all users get the update immediately'}</li>
         </ol>
       </div>
       
@@ -908,8 +920,11 @@ function renderFactoryEditorTab() {
         <button id="factoryStartEditBtn" class="modal-btn primary" style="padding:12px 24px;">
           ${t('factoryEditorStart') || 'Start editing'}
         </button>
-        <button id="factoryExportBtn" class="modal-btn primary" style="padding:12px 24px;">
-          ${t('menuAdminExport') || 'Export'}
+        <button id="factoryPublishBtn" class="modal-btn primary" style="padding:12px 24px;">
+          ${t('adminPublishBtn') || 'Publish'}
+        </button>
+        <button id="factoryExportBtn" class="modal-btn secondary" style="padding:12px 24px;">
+          ${t('menuAdminExport') || 'Export .js'}
         </button>
       </div>
       
@@ -954,6 +969,221 @@ function renderExportTab() {
   `;
 }
 
+/* === PUBLISH TO CLOUDFLARE D1 (Phase 2) === */
+
+/**
+ * Admin API fetch with Google Bearer token.
+ * SPEC: ADMIN_BACKEND_SPEC 15.2 — not driveFetch (Drive-only 401 logic).
+ * @param {string} url
+ * @param {RequestInit} [options]
+ * @param {boolean} [retried]
+ * @returns {Promise<Response>}
+ */
+async function adminApiFetch(url, options, retried) {
+  options = options || {};
+  if (typeof ensureDriveToken !== 'function' || !(await ensureDriveToken(true))) {
+    return new Response(JSON.stringify({ error: 'no_token' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  const token = localStorage.getItem('grafik_drive_token');
+  if (!token) {
+    return new Response(JSON.stringify({ error: 'no_token' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  const headers = Object.assign({}, options.headers || {}, {
+    Authorization: 'Bearer ' + token,
+    'Content-Type': 'application/json; charset=utf-8',
+  });
+  const resp = await fetch(url, Object.assign({}, options, { headers, cache: 'no-store' }));
+  if (resp.status === 401 && !retried) {
+    localStorage.removeItem('grafik_drive_token');
+    localStorage.removeItem('grafik_drive_token_expiry');
+    if (typeof ensureDriveToken === 'function') await ensureDriveToken(true);
+    return adminApiFetch(url, options, true);
+  }
+  // Server asked for email scope — one interactive re-auth with forceIdentityScope
+  if (resp.status === 403 && !retried) {
+    let errBody = null;
+    try {
+      errBody = await resp.clone().json();
+    } catch (_) {}
+    if (errBody && errBody.error === 'email_scope_required' && typeof requestDriveAccessToken === 'function') {
+      const ok = await requestDriveAccessToken({ interactive: true, forceIdentityScope: true });
+      if (ok) return adminApiFetch(url, options, true);
+    }
+  }
+  return resp;
+}
+
+/**
+ * Current server revision for a year (from remote cache or 0).
+ * @param {number} year
+ * @returns {number}
+ */
+function getExpectedRevisionForYear(year) {
+  try {
+    const raw = localStorage.getItem('planzmian_remote_schedule_v1');
+    if (raw) {
+      const payload = JSON.parse(raw);
+      const entry = payload && payload.years && (payload.years[String(year)] || payload.years[year]);
+      if (entry && entry.revision != null) return Number(entry.revision) || 0;
+    }
+  } catch (_) {}
+  return 0;
+}
+
+/**
+ * Publish factory year (factory + admin drafts) to D1 via PUT /api/admin/schedule/:year.
+ * @param {number} year
+ */
+async function publishFactoryScheduleYear(year) {
+  if (!window.requireAdmin || !window.requireAdmin()) {
+    showToast('error', t('adminRequired') || 'Admin access required');
+    return;
+  }
+
+  // Drive feature must be on so ensureDriveToken can obtain a Google token
+  const driveOn =
+    typeof window.isDriveFeatureEnabled === 'function'
+      ? window.isDriveFeatureEnabled()
+      : localStorage.getItem('gillette_prefs_v1')
+        ? (() => {
+            try {
+              return JSON.parse(localStorage.getItem('gillette_prefs_v1')).driveEnabled !== false;
+            } catch (_) {
+              return true;
+            }
+          })()
+        : true;
+  // Prefer explicit driveFeatureOn if exposed
+  let featureOn = true;
+  try {
+    if (typeof driveFeatureOn === 'function') featureOn = driveFeatureOn();
+  } catch (_) {}
+  if (!featureOn && !driveOn) {
+    showToast('error', t('adminPublishNeedDrive') || 'Enable Google sign-in (Drive backup) to publish');
+    return;
+  }
+
+  const y = Number(year);
+  if (!Number.isInteger(y) || y < 2000 || y > 2100) {
+    showToast('error', t('adminInvalidYear') || 'Invalid year');
+    return;
+  }
+
+  const data = mergeFactoryWithCustom(y);
+  const hours = calculateMonthHours(data);
+  const expectedRevision = getExpectedRevisionForYear(y);
+
+  // Normalize month keys to strings for the API
+  const dataOut = {};
+  const hoursOut = {};
+  for (let m = 1; m <= 12; m++) {
+    const mk = String(m);
+    dataOut[mk] = data[m] || data[mk];
+    hoursOut[mk] = hours[m] || hours[mk];
+  }
+
+  showToast('info', t('adminPublishInProgress') || 'Publishing…');
+
+  try {
+    const resp = await adminApiFetch('/api/admin/schedule/' + y, {
+      method: 'PUT',
+      body: JSON.stringify({
+        data: dataOut,
+        hours: hoursOut,
+        expectedRevision: expectedRevision,
+      }),
+    });
+
+    let body = null;
+    try {
+      body = await resp.json();
+    } catch (_) {}
+
+    if (resp.status === 200 && body) {
+      showToast(
+        'success',
+        (t('adminPublishSuccess') || 'Published') +
+          ` ${y} · rev ${body.revision}`
+      );
+      // Refresh remote schedule so this client and cache pick up the new revision
+      try {
+        if (typeof scheduleRemoteCheck === 'function') scheduleRemoteCheck(true);
+        else if (typeof window.scheduleRemoteCheck === 'function') window.scheduleRemoteCheck(true);
+        else {
+          const r = await fetch('/api/schedule', { cache: 'no-store' });
+          if (r.ok && typeof window.applyRemoteSchedulePayload === 'function') {
+            const payload = await r.json();
+            window.applyRemoteSchedulePayload(payload);
+            try {
+              localStorage.setItem(
+                'planzmian_remote_schedule_v1',
+                JSON.stringify({
+                  scheduleId: payload.scheduleId,
+                  generatedAt: payload.generatedAt,
+                  years: payload.years,
+                })
+              );
+            } catch (_) {}
+          }
+        }
+      } catch (_) {}
+      return;
+    }
+
+    if (resp.status === 409 && body && body.error === 'revision_conflict') {
+      showToast(
+        'error',
+        (t('adminPublishConflict') || 'Revision conflict') +
+          ` (server: ${body.currentRevision}). ` +
+          (t('adminPublishConflictHint') || 'Refresh and try again.')
+      );
+      try {
+        const r = await fetch('/api/schedule', { cache: 'no-store' });
+        if (r.ok && typeof window.applyRemoteSchedulePayload === 'function') {
+          window.applyRemoteSchedulePayload(await r.json());
+        }
+      } catch (_) {}
+      return;
+    }
+
+    if (resp.status === 401) {
+      showToast('error', t('adminPublishNeedLogin') || 'Sign in with Google to publish');
+      return;
+    }
+    if (resp.status === 403) {
+      const code = body && body.error;
+      if (code === 'not_admin') {
+        showToast('error', t('adminRequired') || 'Admin access required');
+      } else if (code === 'email_scope_required') {
+        showToast('error', t('adminPublishNeedEmailScope') || 'Re-sign in to grant email scope, then retry');
+      } else {
+        showToast('error', (t('adminPublishForbidden') || 'Forbidden') + (code ? `: ${code}` : ''));
+      }
+      return;
+    }
+    if (resp.status === 400 && body && body.error === 'validation') {
+      const details = (body.details || []).slice(0, 3).join('; ');
+      showToast('error', (t('adminPublishValidation') || 'Validation failed') + (details ? ': ' + details : ''));
+      return;
+    }
+
+    showToast(
+      'error',
+      (t('adminPublishError') || 'Publish failed') +
+        (body && body.error ? `: ${body.error}` : ` (${resp.status})`)
+    );
+  } catch (err) {
+    console.warn('[admin-center] publish failed', err);
+    showToast('error', (t('adminPublishError') || 'Publish failed') + ': ' + (err && err.message ? err.message : String(err)));
+  }
+}
+
 /* === INITIALIZATION AND EVENT LISTENERS === */
 
 // Initialize admin center state
@@ -975,6 +1205,8 @@ window.factoryPaintMonth = factoryPaintMonth;
 window.getFactoryScheduleForYear = getFactoryScheduleForYear;
 window.getFactoryDraftForYear = getFactoryDraftForYear;
 window.exportFactorySchedule = exportFactorySchedule;
+window.publishFactoryScheduleYear = publishFactoryScheduleYear;
+window.adminApiFetch = adminApiFetch;
 window.openAdminCenter = openAdminCenter;
 window.handleResetAllDrafts = handleResetAllDrafts;
 window.handleClearYearDraft = handleClearYearDraft;
