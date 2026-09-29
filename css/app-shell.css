@@ -495,26 +495,26 @@ body.action-sheet-open {
    (v4.0.0 menu/navigation refactor)
    ================================================================ */
 
-/* === TOP BAR: account (left) · title (center) · menu (right) === */
+/* === TOP BAR: account (left) · title (center) · menu (right) ===
+   Grid with three tracks `1fr auto 1fr`: both side columns are equal,
+   so the middle (title) column is always mathematically centered,
+   no matter how wide the account/menu buttons are. */
+.top-bar {
+  display: grid !important;
+  grid-template-columns: 1fr minmax(0, auto) 1fr;
+  align-items: center;
+}
 #userAuthBtn {
-  order: 1;
+  justify-self: start;
   margin-left: 0;
-  flex: 0 0 auto;
 }
 .top-bar-title {
-  /* Absolutely centered against the whole top bar (not just the space
-     left over by the two buttons) — guaranteed optical centering. */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: calc(100% - 2 * (42px + 12px));
+  grid-column: 2;
   min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  pointer-events: none;
 }
 #appContextTitle {
   flex: 0 1 auto;
@@ -528,10 +528,8 @@ body.action-sheet-open {
   max-width: 100%;
 }
 #menuBtn {
-  order: 3;
-  /* no margin-left:auto — the title is centered absolutely, the menu button
-     must stay pinned to the right edge */
-  flex: 0 0 auto;
+  grid-column: 3;
+  justify-self: end;
 }
 
 /* === PRIMARY NAVIGATION (desktop) === */
