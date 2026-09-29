@@ -25,7 +25,7 @@ if (majorVersion < 18) {
 }
 
 console.log('\x1b[36m═══════════════════════════════════════════════════════\x1b[0m');
-console.log('\x1b[36m  Grafik Gillette — Unit Tests\x1b[0m');
+console.log('\x1b[36m  Plan Zmian — Unit Tests\x1b[0m');
 console.log('\x1b[36m═══════════════════════════════════════════════════════\x1b[0m');
 console.log('  Node: ' + process.version);
 console.log('');

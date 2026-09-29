@@ -1,5 +1,5 @@
 /* ================================================================
-    GRAFIK GILLETTE - COMPONENTS.CSS
+    PLAN ZMIAN - COMPONENTS.CSS
     Part of modular CSS split (v3.8.0)
     ================================================================ */
 
@@ -867,7 +867,7 @@ a.menu-item {
 
 
 /* ============================================================
-    POPUP FIX — Graffik Gillette (v2)
+    POPUP FIX — Plan Zmian (v2)
     Desktop: keep original popup sizes (full-cell overlay is by design
     — the user WANTS relief/OT popups to cover adjacent cells).
     Mobile: enlarge OT detail popup so text fits properly.

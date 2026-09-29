@@ -1,7 +1,7 @@
 {
-  "name": "graffik",
+  "name": "plan-zmian",
   "private": true,
-  "description": "Grafik Gillette — factory shift PWA (no runtime npm deps)",
+  "description": "Plan Zmian — factory shift PWA (no runtime npm deps)",
   "scripts": {
     "smoke": "node tools/smoke-check.js",
     "test": "node --test tests/*.test.js",

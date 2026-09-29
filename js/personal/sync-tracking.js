@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — SYNC TRACKING MODULE
+   PLAN ZMIAN — SYNC TRACKING MODULE
    
    PRIVATE MODULE — tracks user's local sync state
    NEVER commit personal data to git — this module only manages

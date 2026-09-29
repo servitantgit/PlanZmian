@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Grafik Gillette - IV brygady",
-  "short_name": "Grafik",
+  "name": "Plan Zmian - IV brygady",
+  "short_name": "Plan Zmian",
   "version": "4.0.0",
   "description": "Grafik zmian dla brygad A/B/C/D z urlopami, nadgodzinami i powiadomieniami",
   "start_url": "./",

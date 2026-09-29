@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — Module 11: GOOGLE DRIVE SYNC
+   PLAN ZMIAN — Module 11: GOOGLE DRIVE SYNC
    (bez serwera / bez bazy danych — czysto klienckie)
    ================================================================ */
 

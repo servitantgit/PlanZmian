@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — Duration contract (pure helpers)
+   PLAN ZMIAN — Duration contract (pure helpers)
 
    CONTRACT (do not break without updating tests + PROJECT_DOCS):
 

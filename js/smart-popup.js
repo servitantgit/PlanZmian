@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE - SMART-POPUP.JS
+   PLAN ZMIAN - SMART-POPUP.JS
    Timeline widgets: handoff flow + cycle-to-free (segment modes)
    ================================================================ */
 

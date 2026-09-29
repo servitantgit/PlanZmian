@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — Logic module (Overtime)
+   PLAN ZMIAN — Logic module (Overtime)
    Ten plik zawiera czyste funkcje obliczeniowe, bez zależności od DOM/LS.
    
    Requires: js/schedules/_core.js (for shiftHours + buildHolidays)

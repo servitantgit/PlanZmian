@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — APP-SHELL.JS
+   PLAN ZMIAN — APP-SHELL.JS
    Reusable full-screen App Panel (with screen stack) + Action Sheet.
    Shell infrastructure for Settings / Share / Export / Admin (v4.0.0).
    Global scope via window.* — NO ES modules (AGENT.md #1).
@@ -263,7 +263,7 @@
 
     // 3) Top bar: stable app name only (period lives between the arrows).
     const title = el('appContextTitle');
-    if (title) title.textContent = localized ? t('appName') : 'Grafik Gillette';
+    if (title) title.textContent = localized ? t('appName') : 'Plan Zmian';
 
     const period = el('contextPeriod');
     if (period) period.textContent = isYear ? String(year) : `${monthLabel} ${year}`;

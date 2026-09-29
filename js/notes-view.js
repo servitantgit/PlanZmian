@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — Module: NOTES VIEW
+   PLAN ZMIAN — Module: NOTES VIEW
    Full-screen panel that shows all notes across all dates in a
    searchable, filterable list. Entry point: side menu → 📝 Notatki.
 

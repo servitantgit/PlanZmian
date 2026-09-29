@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — Module 2: UTILITY + HOLIDAYS + PERSISTENCE + SCHEDULE
+   PLAN ZMIAN — Module 2: UTILITY + HOLIDAYS + PERSISTENCE + SCHEDULE
    ================================================================ */
 
 /* === PERSISTENCJA === */

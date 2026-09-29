@@ -1,8 +1,8 @@
 /* ================================================================
-   GRAFIK GILLETTE — Service Worker (PWA)
+   PLAN ZMIAN — Service Worker (PWA)
    Cache'owanie + powiadomienia push o zmianach
    ================================================================ */
-const CACHE_NAME = 'grafik-gillette-' + '__BUILD_ID__';
+const CACHE_NAME = 'plan-zmian-' + '__BUILD_ID__';
 const ASSETS = [
   './',
   './index.html',
@@ -123,7 +123,7 @@ self.addEventListener('push', (event) => {
   try {
     data = event.data ? event.data.json() : {};
   } catch (e) {
-    data = { title: 'Grafik Gillette', body: 'Nadchodzi zmiana!' };
+    data = { title: 'Plan Zmian', body: 'Nadchodzi zmiana!' };
   }
   const options = {
     body: data.body || 'Sprawdź grafik swojej brygady',
@@ -133,7 +133,7 @@ self.addEventListener('push', (event) => {
     data: { url: data.url || './' },
     tag: 'grafik-reminder',
   };
-  event.waitUntil(self.registration.showNotification(data.title || '⏰ Grafik Gillette', options));
+  event.waitUntil(self.registration.showNotification(data.title || '⏰ Plan Zmian', options));
 });
 
 /* === NOTIFICATION CLICK: open the app === */

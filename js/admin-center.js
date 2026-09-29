@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — Module 10: ADMIN CENTER
+   PLAN ZMIAN — Module 10: ADMIN CENTER
    Factory schedule editing, export, guide and danger zone
    ================================================================ */
 
@@ -471,7 +471,7 @@ function generateAndDownloadDataJs(year) {
     const hoursInner = hoursLines.slice(1, -1).join('\n');
 
     const content = `/* ================================================================
-   GRAFIK GILLETTE — Data for year ${year} (Gillette schedule)
+   PLAN ZMIAN — Data for year ${year} (Gillette schedule)
    
    PUBLIC MODULE — safe to commit to git
    

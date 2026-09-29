@@ -1,10 +1,10 @@
-# 📅 Grafik Gillette
+# 📅 Plan Zmian
 
 **Język / Language / Мова:** [Polski](./README.md) · [English](./README.en.md) · **Українська**
 
 PWA-застосунок для роботи з графіками змін 4 бригад у 3-змінній системі (Ранкова/Денна/Нічна). Замінює паперовий календар у бейджі.
 
-**Демо:** [https://servitantgit.github.io/Graffik/](https://servitantgit.github.io/Graffik/)
+**Демо:** [https://planzmian.pages.dev/](https://planzmian.pages.dev/)
 
 ![Status](https://img.shields.io/badge/status-production-brightgreen)
 ![Tests](https://github.com/servitantgit/Graffik/actions/workflows/test.yml/badge.svg)
@@ -49,7 +49,7 @@ PWA-застосунок для роботи з графіками змін 4 б
 
 ## 🚀 Швидкий старт
 
-1. Відкрийте [https://servitantgit.github.io/Graffik/](https://servitantgit.github.io/Graffik/)
+1. Відкрийте [https://planzmian.pages.dev/](https://planzmian.pages.dev/)
 2. Виберіть бригаду (A/B/C/D) і рік
 3. Дашборд покаже сьогоднішню зміну з таймером (триваюча після опівночі зміна N попереднього дня залишається активною; надгодини `po` можуть її подовжити — опція дати в Налаштування → Загальні)
 4. Перемикайте види через верхнє меню

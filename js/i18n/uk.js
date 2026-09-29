@@ -1,12 +1,12 @@
 /* ================================================================
-   GRAFIK GILLETTE — Translations: UKRAINIAN
+   PLAN ZMIAN — Translations: UKRAINIAN
    ================================================================ */
 
 window.translations = window.translations || {};
 window.translations.uk = {
   // === APP / TOP BAR ===
-  appName: 'Grafik Gillette',
-  appNameShort: 'Grafik',
+  appName: 'Plan Zmian',
+  appNameShort: 'Plan Zmian',
   editMode: 'Режим редагування (E)',
   editModeOn: 'Вимкнути режим редагування (E)',
   editModeOff: 'Увімкнути режим редагування (E)',
@@ -255,7 +255,7 @@ window.translations.uk = {
   shareSuccess: 'Поділились',
   shareLinkCopied: 'Посилання скопійовано в буфер обміну',
   shareLinkFailed: 'Не вдалося скопіювати посилання',
-  shareApp: 'Grafik Gillette',
+  shareApp: 'Plan Zmian',
 
   // === PRINT ===
   printHeaderDashboard: 'Панель',
@@ -294,7 +294,7 @@ window.translations.uk = {
   inDays: 'Через {n} днів',
 
   // === FAQ ===
-  faqTitle: '❓ Довідка — Grafik Gillette (FAQ)',
+  faqTitle: '❓ Довідка — Plan Zmian (FAQ)',
   faqIntro:
     'Клікніть на питання, щоб побачити відповідь. Нижче знайдете детальний опис вкладок, функцій і того, що показує додаток.',
   faqOk: 'Зрозуміло',

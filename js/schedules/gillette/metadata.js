@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — Schedule Metadata (Gillette IV brygady)
+   PLAN ZMIAN — Schedule Metadata (Gillette IV brygady)
    
    PUBLIC MODULE — safe to commit to git
    

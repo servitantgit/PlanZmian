@@ -1,10 +1,10 @@
-# 📅 Grafik Gillette
+# 📅 Plan Zmian
 
 **Język / Language / Мова:** **Polski** · [English](./README.en.md) · [Українська](./README.uk.md)
 
 Aplikacja PWA do zarządzania grafikami zmian dla 4 brygad pracujących w systemie 3-zmianowym (Rano/Popołudnie/Noc). Zastępuje papierowy kalendarz w plakietce.
 
-**Demo:** [https://servitantgit.github.io/Graffik/](https://servitantgit.github.io/Graffik/)
+**Demo:** [https://planzmian.pages.dev/](https://planzmian.pages.dev/)
 
 ![Status](https://img.shields.io/badge/status-production-brightgreen)
 ![Tests](https://github.com/servitantgit/Graffik/actions/workflows/test.yml/badge.svg)
@@ -49,7 +49,7 @@ Aplikacja PWA do zarządzania grafikami zmian dla 4 brygad pracujących w system
 
 ## 🚀 Szybki start
 
-1. Otwórz [https://servitantgit.github.io/Graffik/](https://servitantgit.github.io/Graffik/)
+1. Otwórz [https://planzmian.pages.dev/](https://planzmian.pages.dev/)
 2. Wybierz brygadę (A/B/C/D) i rok
 3. Dashboard pokaże dzisiejszą zmianę z timerem (trwająca po północy zmiana N poprzedniego dnia pozostaje aktywna; nadgodziny `po` mogą ją wydłużyć — opcja daty w Ustawienia → Ogólne)
 4. Przełączaj widoki górnym menu

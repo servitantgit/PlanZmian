@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — Module 3: UI (TOAST, MODAL, MENU, THEMES)
+   PLAN ZMIAN — Module 3: UI (TOAST, MODAL, MENU, THEMES)
    ================================================================ */
 
 /* === THEMES (v4.0.0: 'system' | 'light' | 'dark') ===

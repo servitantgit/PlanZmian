@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — Settings panel (v4.0.0)
+   PLAN ZMIAN — Settings panel (v4.0.0)
    Full-screen Settings built on window.openAppPanel / pushAppPanel.
    This task implements the General and Appearance sections; the
    remaining cards on the main screen are disabled placeholders that

@@ -1,10 +1,10 @@
-# 📅 Grafik Gillette
+# 📅 Plan Zmian
 
 **Język / Language / Мова:** [Polski](./README.md) · **English** · [Українська](./README.uk.md)
 
 A PWA for managing shift schedules of 4 brigades working a 3-shift system (Morning/Afternoon/Night). Replaces the paper calendar in the badge holder.
 
-**Demo:** [https://servitantgit.github.io/Graffik/](https://servitantgit.github.io/Graffik/)
+**Demo:** [https://planzmian.pages.dev/](https://planzmian.pages.dev/)
 
 ![Status](https://img.shields.io/badge/status-production-brightgreen)
 ![Tests](https://github.com/servitantgit/Graffik/actions/workflows/test.yml/badge.svg)
@@ -49,7 +49,7 @@ A PWA for managing shift schedules of 4 brigades working a 3-shift system (Morni
 
 ## 🚀 Quick start
 
-1. Open [https://servitantgit.github.io/Graffik/](https://servitantgit.github.io/Graffik/)
+1. Open [https://planzmian.pages.dev/](https://planzmian.pages.dev/)
 2. Pick a brigade (A/B/C/D) and a year
 3. The Dashboard shows today's shift with a timer (an ongoing previous-day N shift stays active after midnight; `po` overtime can extend it — date option in Settings → General)
 4. Switch views from the top menu

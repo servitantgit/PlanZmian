@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — SCHEDULES CORE (constants + helpers)
+   PLAN ZMIAN — SCHEDULES CORE (constants + helpers)
    
    🌍 PUBLIC MODULE — safe to commit to git
    

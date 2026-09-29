@@ -1,5 +1,5 @@
 /* ================================================================
-    GRAFIK GILLETTE — Module 6: MONTH CALENDAR + INFO + OVERTIME
+    PLAN ZMIAN — Module 6: MONTH CALENDAR + INFO + OVERTIME
     ================================================================ */
 /* === STATE: when selectedDay was set (for mobile UX) === */
 

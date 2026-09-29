@@ -28,7 +28,7 @@ jobs:
           BUILD_ID=$(git rev-parse --short HEAD)
           if [ -f sw.js ]; then
             sed -i "s/__BUILD_ID__/${BUILD_ID}/g" sw.js
-            echo "Cache version set to: grafik-gillette-${BUILD_ID}"
+            echo "Cache version set to: plan-zmian-${BUILD_ID}"
           fi
 
       - name: Setup Pages

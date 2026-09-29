@@ -1,5 +1,5 @@
 # ================================================================
-# GRAFIK GILLETTE - EXPORT PROJECT TO code.json
+# PLAN ZMIAN - EXPORT PROJECT TO code.json
 # ================================================================
 # Version: 5.0 - Profile support (full/code/ui/docs)
 #
@@ -44,7 +44,7 @@ if ($args.Count -gt 0) {
     $arg = $args[0].ToString().ToLower()
     if ($arg -eq '-h' -or $arg -eq '--help' -or $arg -eq '/?' -or $arg -eq 'help') {
         Write-Host ""
-        Write-Host "GRAFIK GILLETTE - export-code.ps1" -ForegroundColor Cyan
+        Write-Host "PLAN ZMIAN - export-code.ps1" -ForegroundColor Cyan
         Write-Host "================================================" -ForegroundColor Cyan
         Write-Host ""
         Write-Host "USAGE:" -ForegroundColor Yellow
@@ -257,7 +257,7 @@ function Get-ProjectTree {
 # --- MAIN EXECUTION ---
 
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host " GRAFIK GILLETTE - Export ($Profile) -> $OUTPUT_FILE" -ForegroundColor Cyan
+Write-Host " PLAN ZMIAN - Export ($Profile) -> $OUTPUT_FILE" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -358,7 +358,7 @@ foreach ($file in $includedFiles) {
 }
 
 $jsonObject = [ordered]@{
-    project = "Grafik Gillette"
+    project = "Plan Zmian"
     description = "PWA for shift schedule management (4 brigades, P and G factory)"
     generated = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
     profile = $Profile

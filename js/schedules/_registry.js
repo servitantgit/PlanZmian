@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — SCHEDULES REGISTRY
+   PLAN ZMIAN — SCHEDULES REGISTRY
    
    PUBLIC MODULE — safe to commit to git
    

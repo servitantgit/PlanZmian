@@ -1,12 +1,12 @@
 /* ================================================================
-   GRAFIK GILLETTE — Translations: POLISH (default)
+   PLAN ZMIAN — Translations: POLISH (default)
    ================================================================ */
 
 window.translations = window.translations || {};
 window.translations.pl = {
   // === APP / TOP BAR ===
-  appName: 'Grafik Gillette',
-  appNameShort: 'Grafik',
+  appName: 'Plan Zmian',
+  appNameShort: 'Plan Zmian',
   editMode: 'Tryb edycji (E)',
   editModeOn: 'Wyłącz tryb edycji (E)',
   editModeOff: 'Włącz tryb edycji (E)',
@@ -255,7 +255,7 @@ window.translations.pl = {
   shareSuccess: 'Udostępniono',
   shareLinkCopied: 'Link skopiowany do schowka',
   shareLinkFailed: 'Nie udało się skopiować linku',
-  shareApp: 'Grafik Gillette',
+  shareApp: 'Plan Zmian',
 
   // === PRINT ===
   printHeaderDashboard: 'Dashboard',
@@ -294,7 +294,7 @@ window.translations.pl = {
   inDays: 'Za {n} dni',
 
   // === FAQ ===
-  faqTitle: '❓ Pomoc — Grafik Gillette (FAQ)',
+  faqTitle: '❓ Pomoc — Plan Zmian (FAQ)',
   faqIntro:
     'Kliknij pytanie, aby zobaczyć odpowiedź. Poniżej znajdziesz szczegółowy opis zakładek, możliwości i tego, co aplikacja pokazuje.',
   faqOk: 'Rozumiem',

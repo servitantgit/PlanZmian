@@ -1,5 +1,5 @@
 /* ================================================================
-    GRAFIK GILLETTE — Module 4: EDIT (immediate save)
+    PLAN ZMIAN — Module 4: EDIT (immediate save)
     ================================================================ */
 
 /**

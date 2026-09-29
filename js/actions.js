@@ -1,5 +1,5 @@
 ﻿/* ================================================================
-   GRAFIK GILLETTE — Module 8: ACTIONS (ICS, PRINT, SHARE, MENU)
+   PLAN ZMIAN — Module 8: ACTIONS (ICS, PRINT, SHARE, MENU)
    ================================================================ */
 
 function bindClick(id, handler) {
@@ -13,7 +13,7 @@ function bindClick(id, handler) {
 
 /* === ICS EXPORT === */
 function exportICS() {
-  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Gillette Grafik//PL\r\n';
+  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Plan Zmian//PL\r\n';
   const ySched = getYearSchedule(currentYear);
   function pad(n) {
     return String(n).padStart(2, '0');

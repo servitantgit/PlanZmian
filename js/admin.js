@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — ADMIN module
+   PLAN ZMIAN — ADMIN module
    Admin identification + admin menu visibility
    ================================================================ */
 

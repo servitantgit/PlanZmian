@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — Cell colors + skins (low-level personalization)
+   PLAN ZMIAN — Cell colors + skins (low-level personalization)
    prefs.cellColors, prefs.cellSkin
    v4.0.0: the settings hub, its injected styles and the color/skin/
    vacation modals moved to js/settings.js + css/app-shell.css.

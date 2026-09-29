@@ -1,16 +1,16 @@
-# PROJECT_DOCS.md - Grafik Gillette Technical Documentation
+# PROJECT_DOCS.md - Plan Zmian Technical Documentation
 
-This document is the current English technical reference for Grafik Gillette.
+This document is the current English technical reference for Plan Zmian.
 It is intended for developers and AI agents. Current source code is always the
 final authority when this document and runtime behavior differ.
 
 ## 1. Project Overview
 
-Grafik Gillette is a local-first Progressive Web App for a four-brigade factory
+Plan Zmian is a local-first Progressive Web App for a four-brigade factory
 shift schedule.
 
-- Production URL: https://servitantgit.github.io/Graffik/
-- Hosting: GitHub Pages
+- Production URL: https://planzmian.pages.dev/
+- Hosting: Cloudflare Pages (https://planzmian.pages.dev/)
 - Stack: Vanilla JavaScript, HTML, CSS, localStorage, Service Worker
 - JavaScript architecture: classic browser scripts, shared global scope
 - No npm runtime dependencies
@@ -73,6 +73,11 @@ screen cascade layer.
 
 All personal data is stored locally first. Storage keys are defined in
 `js/schedules/_core.js`.
+
+> **Legacy identifiers (do not rename).** The app was rebranded from Grafik Gillette to Plan Zmian, but the storage keys below,
+> the Google Drive file names (`grafik-gillette-data.json` + `.backup-1..3.json`), the schedule id `gillette` and the
+> `js/schedules/gillette/` directory keep their old names on purpose. Renaming them would orphan existing user data and
+> Drive backups. A rename requires a migration that reads the old key/file and writes the new one.
 
 | Storage key                   | Purpose                                 |
 | ----------------------------- | --------------------------------------- |
@@ -564,7 +569,7 @@ factory schedule data.
 8. Service Worker and Deployment
 sw.js uses a build ID placeholder:
 
-const CACHE_NAME = 'grafik-gillette-' + '__BUILD_ID__';
+const CACHE_NAME = 'plan-zmian-' + '__BUILD_ID__';
 GitHub Actions replaces __BUILD_ID__ with the current commit hash during
 deployment.
 

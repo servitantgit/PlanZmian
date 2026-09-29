@@ -1,12 +1,12 @@
 /* ================================================================
-   GRAFIK GILLETTE — Translations: ENGLISH
+   PLAN ZMIAN — Translations: ENGLISH
    ================================================================ */
 
 window.translations = window.translations || {};
 window.translations.en = {
   // === APP / TOP BAR ===
-  appName: 'Grafik Gillette',
-  appNameShort: 'Grafik',
+  appName: 'Plan Zmian',
+  appNameShort: 'Plan Zmian',
   editMode: 'Edit mode (E)',
   editModeOn: 'Turn off edit mode (E)',
   editModeOff: 'Turn on edit mode (E)',
@@ -256,7 +256,7 @@ window.translations.en = {
   shareSuccess: 'Shared',
   shareLinkCopied: 'Link copied to clipboard',
   shareLinkFailed: 'Failed to copy link',
-  shareApp: 'Grafik Gillette',
+  shareApp: 'Plan Zmian',
 
   // === PRINT ===
   printHeaderDashboard: 'Dashboard',
@@ -295,7 +295,7 @@ window.translations.en = {
   inDays: 'In {n} days',
 
   // === FAQ ===
-  faqTitle: '❓ Help — Grafik Gillette (FAQ)',
+  faqTitle: '❓ Help — Plan Zmian (FAQ)',
   faqIntro:
     'Click a question to see the answer. Below you will find a detailed description of tabs, features and what the application shows.',
   faqOk: 'I understand',

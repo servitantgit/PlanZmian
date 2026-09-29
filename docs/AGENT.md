@@ -1,4 +1,4 @@
-# AGENT.md — Grafik Gillette engineering rules
+# AGENT.md — Plan Zmian engineering rules
 
 **Status:** mandatory
 **Updated:** 2026-09-22
@@ -10,7 +10,7 @@
 
 ## 0. READ THIS FIRST
 
-This file is the current and authoritative instruction set for every AI agent working on Grafik Gillette.
+This file is the current and authoritative instruction set for every AI agent working on Plan Zmian.
 
 Before analyzing, planning, or modifying code:
 
@@ -95,7 +95,7 @@ Local bug fixes inside these areas are allowed. Structural redesign is not.
 
 ## 2. PROJECT OVERVIEW
 
-Grafik Gillette is a Progressive Web App for a four-brigade factory shift schedule.
+Plan Zmian is a Progressive Web App for a four-brigade factory shift schedule.
 
 ### Stack
 
@@ -107,7 +107,7 @@ Grafik Gillette is a Progressive Web App for a four-brigade factory shift schedu
 - Service Worker
 - Web App Manifest
 - Google Drive OAuth and Drive API
-- GitHub Pages
+- Cloudflare Pages
 - No runtime framework
 - No build system
 - No npm runtime dependencies
@@ -116,7 +116,14 @@ Grafik Gillette is a Progressive Web App for a four-brigade factory shift schedu
 
 ### Production URL
 
-https://servitantgit.github.io/Graffik/
+https://planzmian.pages.dev/
+
+### Branding and legacy identifiers
+
+The product name is **Plan Zmian** (formerly Grafik Gillette / Graffik). Use it in all user-visible text and docs.
+Do NOT rename technical identifiers that carry the old name: `localStorage` keys (`gillette_*`, `grafik_*`),
+Google Drive file names (`grafik-gillette-data*.json`), schedule id `gillette`, `js/schedules/gillette/`,
+ICS UID suffix `@gillette`. Changing them breaks existing user data and Drive sync unless a migration is written first.
 
 ### Primary concepts
 

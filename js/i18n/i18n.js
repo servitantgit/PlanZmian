@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — i18n module: localization logic
+   PLAN ZMIAN — i18n module: localization logic
    Translation dictionaries: pl.js / en.js / uk.js (loaded earlier)
    ================================================================ */
 
@@ -255,7 +255,7 @@ function renderFAQ(container) {
       content: `
                  <div style="background:linear-gradient(135deg, #667eea, #764ba2); color:#fff; padding:15px; border-radius:10px; text-align:center;">
                      <b>${t('faqBugDesc')}</b><br>
-                     <a href="mailto:${t('faqBugEmail')}?subject=Grafik Gillette" style="color:#fff; font-weight:bold; text-decoration:none;">${t('faqBugEmail')}</a>
+                     <a href="mailto:${t('faqBugEmail')}?subject=Plan Zmian" style="color:#fff; font-weight:bold; text-decoration:none;">${t('faqBugEmail')}</a>
                  </div>
                  <p>${t('faqBugNote')}</p>
              `,

@@ -1,5 +1,5 @@
 /* ================================================================
-   GRAFIK GILLETTE — Personal Module: Unified Day Notes
+   PLAN ZMIAN — Personal Module: Unified Day Notes
    ================================================================
    Pure, dependency-free helpers for the unified per-day notes list.
    A day's notes are an array of { id, tag, text } entries:

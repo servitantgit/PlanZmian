@@ -1,5 +1,5 @@
 /* ================================================================
-    GRAFIK GILLETTE — Module 9: STATE + NAVIGATION + EVENTS + STARTUP
+    PLAN ZMIAN — Module 9: STATE + NAVIGATION + EVENTS + STARTUP
     ================================================================ */
 
 /* === STAN === */

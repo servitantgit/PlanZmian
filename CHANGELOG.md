@@ -1,6 +1,6 @@
 # Changelog
 
-Wszystkie istotne zmiany w projekcie Grafik Gillette.
+Wszystkie istotne zmiany w projekcie Plan Zmian.
 
 Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/).
 
@@ -8,6 +8,7 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/).
 
 ### Changed
 
+- **Rebrand: Grafik Gillette -> Plan Zmian.** User-visible name, page titles, manifest (`name` / `short_name`), i18n (`appName`, `appNameShort`, `shareApp`, FAQ title), notifications, ICS `PRODID`, privacy policy, file headers and docs updated. Production URL is now https://planzmian.pages.dev/. Service Worker cache renamed to `plan-zmian-<BUILD_ID>` (old cache is removed on activate). **Intentionally unchanged (data compatibility):** all `localStorage` keys (`gillette_*`, `grafik_*`), Google Drive file names (`grafik-gillette-data*.json`), schedule id `gillette` and `js/schedules/gillette/`, ICS event `UID` suffix `@gillette`.
 - **Overtime display + input: hours + minutes.** Storage stays decimal (`hours: 4.8` = 4h 48m) for compatibility. UI shows `4h 48m` / `4год 48хв` / `4godz 48min`. **Input is two fields (hours + minutes)**, not a decimal — enter `4` and `41` for 4h 41m. Quick buttons 1h–5h unchanged. Helpers: `formatDurationHours*`, `decimalHoursToParts`, `partsToDecimalHours`, `formatClockTime`. `categorizeOvertime` counts by the minute. i18n: `durationHoursUnit` / `durationMinutesUnit` (uk/pl/en).
 - **Relief flow timeline OT nodes** (`js/smart-popup.js`): round hours to **1 decimal** (e.g. 4h 41m → `4.7h`) instead of raw float `4.683333…h`.
 - **Side menu Google login restored** — `#menuDriveLogin` in the Drive card when backup is ON and the user is not signed in (header button still works).
