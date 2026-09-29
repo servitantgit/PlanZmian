@@ -8,15 +8,24 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/).
 
 ### Added
 
-- **Remote factory schedule — Phase 1 (read-only), branch `cloudflare`.** Spec: `docs/ADMIN_BACKEND_SPEC.md`.
+- **Remote factory schedule — Phase 2 (admin Publish to D1).** Spec: `docs/ADMIN_BACKEND_SPEC.md`.
+  - `functions/_lib/auth.js` — `requireAdmin`: Google Bearer → `tokeninfo`, `env.GOOGLE_CLIENT_ID` + `env.ADMIN_EMAILS`.
+  - `functions/_lib/validate.mjs` — pure validation; server does **not** recompute hours.
+  - `functions/api/admin/schedule/[year].js` — `PUT /api/admin/schedule/:year` (`expectedRevision`, `409 revision_conflict`, upsert + history row).
+  - `js/admin-center.js` — `publishFactoryScheduleYear` / `adminApiFetch`; **📤** on the factory editor bar while painting; Publish in Admin Center.
+  - `js/sync.js` — `forceIdentityScope` for `email_scope_required`; window exports for token helpers.
+  - i18n pl/en/uk publish strings. Docs and READMEs: D1 is source of truth; Export `.js` is optional fallback.
+  - Phase 3 (history UI / rollback) still open.
+
+- **Remote factory schedule — Phase 1 (read-only) + 1.5 seed.** Spec: `docs/ADMIN_BACKEND_SPEC.md`.
   - `migrations/0001_init.sql` — D1 schema: `schedule_years` + `schedule_history` (`schedule_id` always `gillette`). Applied manually in Cloudflare; no `wrangler.toml` in the repo.
   - `functions/api/schedule.js` — public Cloudflare Pages Function (ES module) `GET /api/schedule`: `Cache-Control: no-cache` + `ETag` (max revision + year count), `If-None-Match` → `304`, empty DB → `200 {"scheduleId":"gillette","years":{}}`, missing `env.DB` or DB error → `503 {"error":"unavailable"}` with no details leaked or logged. `updatedBy` (admin e-mail) is never exposed.
-  - `js/schedules/remote.js` — new classic script, loaded right after `js/schedules/gillette/2026.js` and before `js/core.js` (also before `js/personal/sync-tracking.js`). Applies `localStorage['planzmian_remote_schedule_v1']` **synchronously at load** (offline-safe first render), then `fetch('/api/schedule', { cache: 'no-store' })`; newer revisions are applied through the existing `registerYearData('gillette', …)` so `factorySchedule` / `factoryMonthHours` are updated **in place** (references never re-assigned). Client-side validation mirrors the server rules (months 1–12, brigades A/B/C/D, array length = days in month, values only `'' | 'R' | 'P' | 'N'` — `'W'` rejected); an invalid year is skipped and the rest applied. After applying: `refreshViews()` + toast `toastScheduleUpdatedRemote` (pl/en/uk), suppressed for the first application after a cold start. Re-check on `visibilitychange` (max once per 60 s) and on `online`. Any network/parse error is ignored silently (`console.warn` without schedule data).
-  - New localStorage key `planzmian_remote_schedule_v1` (only new key; `gillette_*` / `grafik_*` untouched).
-  - `sw.js`: `./js/schedules/remote.js` added to `ASSETS`; requests whose `pathname` starts with `/api/` are no longer served cache-first and `/api/admin/*` is never cached. `CACHE_NAME` and `activate` logic unchanged.
-  - `tools/seed-schedule.mjs` → `migrations/seed_2026.sql` (Phase 1.5 seed): loads `js/schedules/gillette/2026.js` via `node:vm` with `registerSchedule` / `registerYearData` stubs, writes one `INSERT INTO schedule_years` with `revision = 1`, `updated_by = 'seed'`. **Hours are copied verbatim, never recomputed** (October / brigade A = 160 on purpose).
-  - Tests: `tests/remote-schedule.test.js` (alias reference preserved + year content updated, invalid year skipped, empty/malformed payload safe, `'W'` rejected, array length vs days in month incl. Feb 2028, unknown symbol, missing brigade, month 13) and `tests/seed-schedule.test.js` (seed SQL deep-equal to what `2026.js` registers, incl. `hours[10].A === 160`).
-  - `js/schedules/gillette/2026.js` remains the static fallback: with an empty DB or an unreachable API the app behaves exactly as before. Phase 2 (PUT / auth / Publish) and Phase 3 (history / rollback) are **not** part of this change.
+  - `js/schedules/remote.js` — classic script after `gillette/2026.js`, before `core.js`. Sync localStorage cache at load, then `fetch('/api/schedule')`; applies via `registerYearData` in place; validation `''|R|P|N`; re-check on visibility/online.
+  - localStorage key `planzmian_remote_schedule_v1`.
+  - `sw.js`: `/api/*` not cache-first; `/api/admin/*` never cached.
+  - `tools/seed-schedule.mjs` → `migrations/seed_2026.sql` (hours verbatim, October A = 160).
+  - Tests: `tests/remote-schedule.test.js`, `tests/seed-schedule.test.js`.
+  - Static `js/schedules/gillette/2026.js` remains offline / empty-DB fallback only.
 
 ### Changed
 

@@ -316,7 +316,11 @@ MIT License (or an internal factory tool — at the author's discretion)
 
 ## Admin: publishing the official schedule
 
-1. Admin Center → editor (local R/P/N/W drafts).
-2. **Export** → `YYYY.js` file (this is not publication yet).
-3. In the repo: `js/schedules/gillette/YYYY.js` (+ `index.html` / `sw.js` for a **new** year only).
-4. `git push` to `main` → GitHub Pages → all users after the SW update.
+Source of truth is **Cloudflare D1** (Pages Functions). Static `js/schedules/gillette/YYYY.js` is offline fallback only.
+
+1. Sign in with Google as an admin.
+2. Admin Center → Factory → **Start editing** (local R/P/N/W drafts).
+3. On the paint-mode bar press **📤** (or Publish in Admin Center).
+4. Clients pick up the new `revision` from `/api/schedule` (no git/deploy).
+
+Optional: **Export `.js`** remains an emergency git path. Details: [docs/PROJECT_DOCS.md](./docs/PROJECT_DOCS.md) §3.2, [docs/ADMIN_BACKEND_SPEC.md](./docs/ADMIN_BACKEND_SPEC.md).

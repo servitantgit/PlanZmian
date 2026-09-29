@@ -1,8 +1,8 @@
 # AGENT.md — Plan Zmian engineering rules
 
 **Status:** mandatory
-**Updated:** 2026-09-22
-**Project state:** post-v4 UI refactor stabilization + Weekend Hours feature complete
+**Updated:** 2026-09-29
+**Project state:** Cloudflare D1 factory schedule live (Phase 1 read + Phase 2 admin Publish). Static `gillette/YYYY.js` is fallback only. Phase 3 history/rollback not started. Drive personal sync unchanged.
 **Owner language:** Ukrainian
 **Primary UI language:** Polish
 

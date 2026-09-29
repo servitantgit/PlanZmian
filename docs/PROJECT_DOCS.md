@@ -98,56 +98,60 @@ All personal data is stored locally first. Storage keys are defined in
 
 Never commit browser localStorage content to git.
 
-### 3.2 Remote factory schedule (Cloudflare D1, Phase 1, read-only)
+### 3.2 Remote factory schedule (Cloudflare D1) — **live**
 
-Branch `cloudflare` adds a read-only backend for the **factory** schedule
-(spec: `docs/ADMIN_BACKEND_SPEC.md`, Phase 1 + 1.5). Personal data and Drive
-sync are unchanged.
+Source of truth for the **public factory** schedule is **Cloudflare D1**,
+served by Pages Functions on the same origin as the PWA
+(`planzmian.pages.dev`). Spec: `docs/ADMIN_BACKEND_SPEC.md`.
+Personal data and Google Drive sync are unchanged.
 
-- `migrations/0001_init.sql` — D1 schema: `schedule_years` and
-  `schedule_history`. `schedule_id` is always `'gillette'`.
-  Migrations are applied manually in Cloudflare (no `wrangler.toml` in repo).
-- `functions/api/schedule.js` — Cloudflare Pages Function (ES module,
-  `GET /api/schedule`, public, no auth):
+**Status (2026-09-29):** Phase 1 (read) + Phase 1.5 (seed) + Phase 2
+(admin Publish) are **implemented and deployed**. Phase 3 (history UI /
+rollback API) is not built yet; `schedule_history` rows are already written
+on each Publish.
+
+#### Read path (all users)
+
+- Binding: Cloudflare Pages → D1 database, binding name **`DB`**
+  (no `wrangler.toml` in the repo).
+- `migrations/0001_init.sql` — tables `schedule_years`, `schedule_history`
+  (`schedule_id` always `'gillette'`). Applied manually in the D1 console.
+- `functions/api/schedule.js` — `GET /api/schedule` (public, no auth):
   - `200 { scheduleId, generatedAt, years: { "2026": { revision, updatedAt,
-    data, hours } } }`; `updatedBy` (admin e-mail) is never exposed;
-  - `Cache-Control: no-cache` + `ETag` (max revision + year count);
-    `If-None-Match` → `304`;
-  - empty DB → `200 { years: {} }` (not an error);
-  - missing `env.DB` binding or any DB failure → `503 { error: 'unavailable' }`
-    with no details logged.
-- `js/schedules/remote.js` — classic client script, loaded right after
-  `js/schedules/gillette/2026.js` and before `js/core.js`:
-  - synchronously applies `localStorage['planzmian_remote_schedule_v1']`
-    during load, so the first render already shows the last known server
-    schedule (offline-safe);
-  - asynchronously `fetch('/api/schedule', { cache: 'no-store' })`, applies
-    newer revisions via `registerYearData('gillette', year, data, hours)`,
-    writes the cache, then `refreshViews()` + a non-intrusive toast
-    (`toastScheduleUpdatedRemote`) — suppressed for the first application
-    after a cold start;
-  - the `factorySchedule` / `factoryMonthHours` alias objects are updated
-    IN PLACE (never re-assigned), so all readers keep working;
-  - light client-side validation mirrors the server rules: months `1`–`12`,
-    brigades `A/B/C/D`, array length = days in month, values only
-    `'' | 'R' | 'P' | 'N'` (`'W'` is rejected — the paint tool writes `''`);
-    an invalid year is skipped, the rest is applied;
-  - re-checks on `visibilitychange` (at most once per 60 s) and on `online`;
-    any network/parse error is silently ignored (`console.warn` without data).
-- `sw.js` — `./js/schedules/remote.js` added to `ASSETS`; requests whose
-  `pathname` starts with `/api/` are never served cache-first, and
-  `/api/admin/*` is never cached. `CACHE_NAME` / `activate` untouched.
-- `tools/seed-schedule.mjs` — one-off seed. Loads
-  `js/schedules/gillette/2026.js` through `node:vm` with
-  `registerSchedule`/`registerYearData` stubs and writes
-  `migrations/seed_2026.sql` (`revision = 1`, `updated_by = 'seed'`).
-  **Hours are copied verbatim from the file and never recomputed**
-  (October / brigade A = 160 on purpose).
-  Run: `node tools/seed-schedule.mjs` (`--print` to stdout only).
+    data, hours } } }`; **`updatedBy` is never exposed**;
+  - `Cache-Control: no-cache` + `ETag`; `If-None-Match` → `304`
+    (weak `W/` ETags may still return 200 — non-blocking);
+  - empty DB → `200 { years: {} }`; missing `env.DB` / DB error →
+    `503 { error: 'unavailable' }` with no details leaked.
+- `js/schedules/remote.js` — classic script after `gillette/2026.js`,
+  before `core.js`:
+  - sync apply of `localStorage['planzmian_remote_schedule_v1']` at load;
+  - async `fetch('/api/schedule')` → `registerYearData` **in place**;
+  - validation: months 1–12, brigades A/B/C/D, values `''|R|P|N` only;
+  - re-check on `visibilitychange` (≤1/60s) and `online`.
+- `sw.js` — `/api/*` is never cache-first; `/api/admin/*` never cached.
+- Static `js/schedules/gillette/2026.js` remains the **offline / empty-DB
+  fallback** only. Priority: D1 (and its localStorage cache) > static file.
 
-`js/schedules/gillette/2026.js` stays as the static fallback: with an empty DB
-or an unreachable API the app behaves exactly as before. Phase 2 (Publish /
-PUT / auth) and Phase 3 (history / rollback) are NOT implemented here.
+#### Write path (admins only) — Phase 2
+
+- Env (Cloudflare → Variables and Secrets, not in git):
+  - `GOOGLE_CLIENT_ID` — same value as `DEFAULT_CLIENT_ID` in `js/sync.js`;
+  - `ADMIN_EMAILS` — comma-separated, lowercase (Secret recommended).
+- `functions/_lib/auth.js` — `requireAdmin(request, env)`: Bearer Google
+  access token → `tokeninfo` → `aud`/`azp` == `GOOGLE_CLIENT_ID`,
+  `email_verified`, email ∈ `ADMIN_EMAILS`. Success cached ≤60s per isolate.
+- `functions/_lib/validate.mjs` — pure validator (year, data, hours);
+  hours are **not** recomputed on the server.
+- `functions/api/admin/schedule/[year].js` — `PUT /api/admin/schedule/:year`:
+  body `{ data, hours, expectedRevision }`; `409 revision_conflict` on
+  mismatch; upsert `schedule_years` + insert `schedule_history`;
+  success `200 { year, revision, updatedAt }`.
+- Client: `publishFactoryScheduleYear(year)` in `js/admin-center.js`
+  via `adminApiFetch` (Google Bearer, not `driveFetch`). Publish controls:
+  - **📤** on the factory editor bar (while painting);
+  - **Опублікувати / Publish** in Admin Center → Factory tab.
+- Export `.js` (git deploy path) remains as an optional fallback only.
 
 ### 3.1 Preferences
 
@@ -598,26 +602,27 @@ Related helpers (all in `js/sync.js`):
 - `renderDriveSyncOptionsDiff(container, localStats, remoteStats, state)` — file-local, renders the diff table (or loading/error state).
 
 7. Admin Publishing Workflow
-The public factory schedule is stored in:
 
-js/schedules/gillette/YYYY.js
-Admin Center edits create local factory drafts only. They do not publish data.
+**Primary path (Cloudflare D1 — production):**
 
-Publishing flow:
+1. Sign in with Google as an admin (`ADMIN_EMAILS` on the server; client
+   `js/admin.js` list is UI-only).
+2. Admin Center → Factory → Start editing (or open an existing year).
+3. Paint R/P/N/W on the calendar. Drafts stay in
+   `gillette_factory_drafts_v1` until Publish.
+4. Press **📤 Publish** on the factory editor bar (or Publish in Admin
+   Center). Client sends `PUT /api/admin/schedule/:year` with merged
+   factory+drafts, calculated hours, and `expectedRevision` from the
+   remote cache.
+5. On `200`, revision bumps; all clients pick up the new year on the next
+   `/api/schedule` fetch (visibility / online / cold start).
 
-Sign in as an admin.
-Open Admin Center.
-Use the factory editor to create local R/P/N/W draft changes.
-Export the year as YYYY.js.
-Copy the exported file to js/schedules/gillette/.
-For a new year only:
-add the script to index.html;
-add the path to sw.js ASSETS.
-Commit and push to main.
-GitHub Actions deploys the GitHub Pages version.
-Users receive the update through Service Worker update flow.
-Never publish personal customSchedule, vacations, overtime, or notes as
+Never publish personal `customSchedule`, vacations, overtime, or notes as
 factory schedule data.
+
+**Optional fallback (static file / git):** Export still builds `YYYY.js`
+for offline mirrors or emergency git deploy. It is **not** required for
+normal publishing after Phase 2.
 
 8. Service Worker and Deployment
 sw.js uses a build ID placeholder:

@@ -318,7 +318,11 @@ MIT License (lub wewnętrzne narzędzie fabryczne — wg wyboru autora)
 
 ## Admin: publikacja fabrycznego grafiku
 
-1. Admin Center → edytor (lokalne szkice R/P/N/W).
-2. **Eksport** → plik `YYYY.js` (to jeszcze nie jest publikacja).
-3. W repo: `js/schedules/gillette/YYYY.js` (+ `index.html` / `sw.js` tylko dla **nowego** roku).
-4. `git push` na `main` → GitHub Pages → wszyscy użytkownicy po update SW.
+Źródło prawdy — **Cloudflare D1** (Pages Functions). Statyczny `js/schedules/gillette/YYYY.js` to tylko offline-fallback.
+
+1. Zaloguj się Google jako admin.
+2. Admin Center → Factory → **Rozpocznij edycję** (szkice R/P/N/W lokalnie).
+3. Na pasku trybu malowania naciśnij **📤** (lub „Opublikuj” w Admin Center).
+4. Klienci pobierają nową `revision` z `/api/schedule` (bez git/deploy).
+
+Opcjonalnie: **Eksport `.js`** pozostaje ścieżką awaryjną do git. Szczegóły: [docs/PROJECT_DOCS.md](./docs/PROJECT_DOCS.md) §3.2, [docs/ADMIN_BACKEND_SPEC.md](./docs/ADMIN_BACKEND_SPEC.md).

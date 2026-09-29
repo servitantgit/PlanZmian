@@ -316,7 +316,11 @@ MIT License (або внутрішній заводський інструмен
 
 ## Адмін: публікація заводського графіка
 
-1. Admin Center → редактор (локальні чернетки R/P/N/W).
-2. **Експорт** → файл `YYYY.js` (це ще не публікація).
-3. У репозиторії: `js/schedules/gillette/YYYY.js` (+ `index.html` / `sw.js` лише для **нового** року).
-4. `git push` у `main` → GitHub Pages → усі користувачі після оновлення SW.
+Джерело правди — **Cloudflare D1** (`GET/PUT` через Pages Functions). Статичний `js/schedules/gillette/YYYY.js` — лише офлайн-fallback.
+
+1. Увійдіть Google під адмін-акаунтом.
+2. Admin Center → Factory → **Почати редагування** (чернетки R/P/N/W локально).
+3. У панелі режиму малювання натисніть **📤** (або «Опублікувати» в Admin Center).
+4. Усі клієнти підхоплюють нову `revision` з `/api/schedule` (без git/deploy).
+
+Опційно: **Експорт `.js`** лишається резервним шляхом у git. Деталі: [docs/PROJECT_DOCS.md](./docs/PROJECT_DOCS.md) §3.2, [docs/ADMIN_BACKEND_SPEC.md](./docs/ADMIN_BACKEND_SPEC.md).
