@@ -1,6 +1,6 @@
 /* ================================================================
    LEGACY SITE — SELF-DESTRUCTING SERVICE WORKER
-   https://servitantgit.github.io/Graffik/
+   https://servitantgit.github.io/PlanZmian/
 
    The old app registered a cache-first worker on this origin. It is
    still controlling existing visitors and would keep serving the OLD

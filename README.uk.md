@@ -7,7 +7,7 @@ PWA-застосунок для роботи з графіками змін 4 б
 **Демо:** [https://planzmian.pages.dev/](https://planzmian.pages.dev/)
 
 ![Status](https://img.shields.io/badge/status-production-brightgreen)
-![Tests](https://github.com/servitantgit/Graffik/actions/workflows/test.yml/badge.svg)
+![Tests](https://github.com/servitantgit/PlanZmian/actions/workflows/test.yml/badge.svg)
 ![PWA](https://img.shields.io/badge/PWA-ready-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -56,7 +56,7 @@ PWA-застосунок для роботи з графіками змін 4 б
 
 **Стилі клітинок:** у Персоналізації доступні три варіанти: повна заливка, спокійна смужка та кольорова рамка. У останньому варіанті колір рамки клітинки й кола навколо дати відповідає зміні.
 
-**Деталі функцій:** ☰ Меню → ❓ Довідка / FAQ · код: [GitHub](https://github.com/servitantgit/Graffik)
+**Деталі функцій:** ☰ Меню → ❓ Довідка / FAQ · код: [GitHub](https://github.com/servitantgit/PlanZmian)
 
 ## 📱 Встановлення як PWA
 

@@ -7,7 +7,7 @@ A PWA for managing shift schedules of 4 brigades working a 3-shift system (Morni
 **Demo:** [https://planzmian.pages.dev/](https://planzmian.pages.dev/)
 
 ![Status](https://img.shields.io/badge/status-production-brightgreen)
-![Tests](https://github.com/servitantgit/Graffik/actions/workflows/test.yml/badge.svg)
+![Tests](https://github.com/servitantgit/PlanZmian/actions/workflows/test.yml/badge.svg)
 ![PWA](https://img.shields.io/badge/PWA-ready-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -56,7 +56,7 @@ A PWA for managing shift schedules of 4 brigades working a 3-shift system (Morni
 
 **Cell styles:** Personalisation offers three variants: full fill, subtle bar, and coloured border. In the last one, the colour of the cell border and of the ring around the date reflects the shift.
 
-**Feature details:** ☰ Menu → ❓ Help / FAQ · code: [GitHub](https://github.com/servitantgit/Graffik)
+**Feature details:** ☰ Menu → ❓ Help / FAQ · code: [GitHub](https://github.com/servitantgit/PlanZmian)
 
 ## 📱 Installing as a PWA
 

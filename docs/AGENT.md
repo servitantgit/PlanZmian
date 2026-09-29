@@ -881,18 +881,29 @@ Do not cache temporary verification files.
 
 ## 12a. DEPLOYMENT TOPOLOGY
 
-- `cloudflare` — source of truth; Cloudflare Pages auto-deploys
-  `https://planzmian.pages.dev/` from it. CI runs here.
-- `main` — kept in sync with `cloudflare` (CI + safe mirror).
-- `gh-pages` — legacy `https://servitantgit.github.io/Graffik/`, now a redirect
-  stub only: `.nojekyll`, `index.html`, `sw.js` at the branch **root** (Pages
-  serves the branch root — do not leave them in a subfolder).
-  **There is no deploy workflow for it.** `.github/workflows/deploy.yml` was
-  deleted after a `workflow_dispatch` run from an old commit overwrote the stub
-  with the previous app. To change the stub, commit directly to `gh-pages`.
+SINGLE BRANCH: `main`. It carries both deliverables:
 
-Never re-add a GitHub Pages deploy workflow, and never point it at the app
-folder. The legacy origin must contain nothing but the redirect stub.
+- repository ROOT = the app → Cloudflare Pages → `https://planzmian.pages.dev/`
+- `docs/` = the legacy redirect stub → GitHub Pages (Source: branch `main`,
+  Folder `/docs`) → `https://servitantgit.github.io/PlanZmian/`
+
+Why the stub lives in `docs/`: GitHub Pages can serve the branch root OR
+`/docs` on the same branch. The root is the app, so the stub must be in
+`docs/` or the legacy URL would serve a second, stale copy of the app.
+
+Rules:
+
+- **Never re-add a GitHub Pages deploy workflow.** `deploy.yml` was deleted
+  after a `workflow_dispatch` run from an old commit overwrote the stub.
+  Pages serves `main` directly, no Actions involved.
+- **Never move the stub to the repository root** and never publish the app
+  folder to GitHub Pages.
+- To change the stub, edit `docs/index.html` / `docs/sw.js` on `main`.
+- Smoke checks (`tools/smoke-check.js`) assert the stub's presence and
+  behaviour — keep them passing.
+- The repository was renamed `Graffik` → `PlanZmian`, so the legacy Pages
+  path changed with it. `…/Graffik/` is 404; only `…/PlanZmian/` is served.
+  Old references to `…/Graffik/` in CHANGELOG history are intentional.
 
 ---
 

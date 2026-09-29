@@ -80,16 +80,16 @@ mustInclude('js/i18n/uk.js', 'menuDriveLogin', 'uk menuDriveLogin');
 mustInclude('js/i18n/en.js', 'menuDriveLogin', 'en menuDriveLogin');
 mustInclude('js/i18n/pl.js', 'menuDriveLogin', 'pl menuDriveLogin');
 
-// --- legacy GitHub Pages redirect stub (servitantgit.github.io/Graffik) ---
-mustExist('redirect/index.html');
-mustExist('redirect/sw.js');
-mustInclude('redirect/index.html', 'https://planzmian.pages.dev/', 'redirect targets the new address');
-mustInclude('redirect/index.html', 'http-equiv="refresh"', 'redirect has a no-JS meta refresh');
-mustInclude('redirect/index.html', 'location.replace', 'redirect uses location.replace (no back-button loop)');
-mustInclude('redirect/index.html', 'display-mode: standalone', 'installed PWA is detected');
-mustInclude('redirect/index.html', 'navigator.standalone', 'iOS standalone detection');
-mustInclude('redirect/sw.js', 'caches.delete', 'legacy worker wipes the stale caches');
-mustInclude('redirect/sw.js', 'registration.unregister', 'legacy worker unregisters itself');
+// --- legacy GitHub Pages redirect stub (docs/ is published as the Pages root) ---
+mustExist('docs/index.html');
+mustExist('docs/sw.js');
+mustInclude('docs/index.html', 'https://planzmian.pages.dev/', 'redirect targets the new address');
+mustInclude('docs/index.html', 'http-equiv="refresh"', 'redirect has a no-JS meta refresh');
+mustInclude('docs/index.html', 'location.replace', 'redirect uses location.replace (no back-button loop)');
+mustInclude('docs/index.html', 'display-mode: standalone', 'installed PWA is detected');
+mustInclude('docs/index.html', 'navigator.standalone', 'iOS standalone detection');
+mustInclude('docs/sw.js', 'caches.delete', 'legacy worker wipes the stale caches');
+mustInclude('docs/sw.js', 'registration.unregister', 'legacy worker unregisters itself');
 
 // report
 console.log('Smoke checks\n');

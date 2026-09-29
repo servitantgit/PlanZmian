@@ -691,23 +691,24 @@ cancelled, look for orphaned statements left at the end of the file outside
 any test() call.
 
 11. Legacy URL and Deployment Topology
-Branches:
+SINGLE BRANCH: main. It carries everything — the app in the repository root
+(deployed to Cloudflare Pages → https://planzmian.pages.dev/) and the legacy
+redirect stub in docs/ (published by GitHub Pages →
+https://servitantgit.github.io/PlanZmian/).
 
-cloudflare — source of truth. Cloudflare Pages auto-deploys
-https://planzmian.pages.dev/ from it; CI runs here.
-main — kept in sync with cloudflare, used by CI and as a safe mirror.
-gh-pages — the legacy GitHub Pages site, now only a redirect stub
-(.nojekyll, index.html, sw.js committed at the branch ROOT). No deployment
-workflow exists for it: a workflow_dispatch run from an old commit had
-already overwritten the stub once, so .github/workflows/deploy.yml was
-deleted. Update the stub by committing directly to gh-pages.
+Why docs/: GitHub Pages can serve either the branch root or /docs on the
+same branch. The branch root is the app, so the stub must live in docs/ or
+the legacy URL would serve a second, stale copy of the app. Pages setting:
+Source = "Deploy from a branch", Branch = main, Folder = /docs.
+There is no deploy workflow for GitHub Pages and there must not be one — a
+workflow_dispatch run from an old commit had already overwritten the stub.
 
-The legacy site (https://servitantgit.github.io/Graffik/):
-GitHub Pages cannot issue HTTP 301s, so redirect/index.html uses a
+The legacy site (https://servitantgit.github.io/PlanZmian/):
+GitHub Pages cannot issue HTTP 301s, so docs/index.html uses a
 <meta http-equiv="refresh"> (no-JS fallback) plus
 window.location.replace() (instant, keeps the old URL out of history), and
 sets rel="canonical" + noindex.
-redirect/sw.js is a SELF-DESTRUCTING worker: install -> skipWaiting,
+docs/sw.js is a SELF-DESTRUCTING worker: install -> skipWaiting,
 activate -> delete every cache of the origin + unregister itself +
 clients.claim(), fetch -> always network. Without it the previous
 cache-first worker would keep serving the old app to returning visitors and
@@ -716,6 +717,10 @@ An installed PWA is bound to its own origin, and a cross-origin redirect is
 blocked in standalone display mode. The stub detects
 (display-mode: standalone) / navigator.standalone and shows manual re-install
 steps, because the redirect would silently fail there.
+
+Note: the repository was renamed Graffik → PlanZmian, so the legacy Pages
+path changed with it. The pre-rename URL (…/Graffik/) returns 404; only
+…/PlanZmian/ is served.
 
 12. Current Limitations
 State is global across classic scripts.

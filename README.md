@@ -7,7 +7,7 @@ Aplikacja PWA do zarządzania grafikami zmian dla 4 brygad pracujących w system
 **Demo:** [https://planzmian.pages.dev/](https://planzmian.pages.dev/)
 
 ![Status](https://img.shields.io/badge/status-production-brightgreen)
-![Tests](https://github.com/servitantgit/Graffik/actions/workflows/test.yml/badge.svg)
+![Tests](https://github.com/servitantgit/PlanZmian/actions/workflows/test.yml/badge.svg)
 ![PWA](https://img.shields.io/badge/PWA-ready-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -56,7 +56,7 @@ Aplikacja PWA do zarządzania grafikami zmian dla 4 brygad pracujących w system
 
 **Style komórek:** w Personalizacji dostępne są trzy warianty: pełne wypełnienie, spokojny pasek oraz kolorowe obramowanie. W ostatnim wariancie kolor obramowania komórki i okręgu wokół daty odpowiada zmianie.
 
-**Szczegóły funkcji:** ☰ Menu → ❓ Pomoc / FAQ · kod: [GitHub](https://github.com/servitantgit/Graffik)
+**Szczegóły funkcji:** ☰ Menu → ❓ Pomoc / FAQ · kod: [GitHub](https://github.com/servitantgit/PlanZmian)
 
 ## 📱 Instalacja jako PWA
 
