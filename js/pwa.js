@@ -46,9 +46,42 @@ function showNotificationViaServiceWorker(title, options) {
 window.showNotificationViaServiceWorker = showNotificationViaServiceWorker;
 
 
-/* === SERVICE WORKER + AUTO-UPDATE === */
+/* === SERVICE WORKER + AUTO-UPDATE ===
+   The SW uses a cache-first strategy and its cache name is the build id
+   (`__BUILD_ID__`, replaced by CI). Locally that placeholder is never
+   replaced, so the cache name never changes and a locally edited CSS/JS
+   file is served from the cache forever — changes appear to "not apply".
+   Skip registration on localhost / file:// so local work always shows the
+   freshly edited files. */
+function isLocalDevOrigin() {
+  try {
+    const h = window.location.hostname;
+    return h === 'localhost' || h === '127.0.0.1' || h === '[::1]' || h === '';
+  } catch (e) {
+    return false;
+  }
+}
+
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
+  if (window.location.protocol === 'file:') return;
+  if (isLocalDevOrigin()) {
+    // Dev: drop any previously installed worker so it can't serve stale files.
+    if (navigator.serviceWorker.getRegistrations) {
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((regs) => regs.forEach((r) => r.unregister()))
+        .catch(() => {});
+    }
+    if (window.caches && caches.keys) {
+      caches
+        .keys()
+        .then((keys) => keys.forEach((k) => caches.delete(k)))
+        .catch(() => {});
+    }
+    console.info('[PWA] Service Worker skipped on local dev origin (no stale cache).');
+    return;
+  }
 
   window.addEventListener('load', () => {
     navigator.serviceWorker
