@@ -81,7 +81,8 @@ function installRegistryStub() {
 // ============================================================
 
 test('remote: cache key is planzmian_remote_schedule_v1', () => {
-
+  assert.strictEqual(REMOTE_SCHEDULE_CACHE_KEY, 'planzmian_remote_schedule_v1');
+});
 // ============================================================
 // applyRemoteSchedulePayload
 // ============================================================
@@ -157,6 +158,11 @@ test("applyRemoteSchedulePayload: value 'W' is rejected", () => {
   installRegistryStub();
   const entry = makeEntry(2026);
   entry.data['1'].A[3] = 'W';
+
+  const outcome = applyRemoteSchedulePayload({ years: { '2026': entry } });
+  assert.deepStrictEqual(outcome.applied, []);
+  assert.deepStrictEqual(outcome.skipped, [2026]);
+});
 
 // ============================================================
 // client-side validation
@@ -250,15 +256,6 @@ test('validateSchedulePayload: full valid payload passes, empty years pass', () 
   );
   assert.strictEqual(validateRemoteSchedulePayload({ years: {} }), true);
   assert.strictEqual(validateRemoteSchedulePayload(null), false);
-});
-
-
-  const outcome = applyRemoteSchedulePayload({ years: { '2026': entry } });
-  assert.deepStrictEqual(outcome.applied, []);
-  assert.deepStrictEqual(outcome.skipped, [2026]);
-});
-
-  assert.strictEqual(REMOTE_SCHEDULE_CACHE_KEY, 'planzmian_remote_schedule_v1');
 });
 
 test('remote: schedule id stays gillette', () => {
