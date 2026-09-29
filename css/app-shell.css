@@ -499,6 +499,7 @@ body.action-sheet-open {
 #userAuthBtn {
   order: 1;
   margin-left: 0;
+  flex: 0 0 auto;
 }
 .top-bar-title {
   flex: 1 1 auto;
@@ -521,7 +522,9 @@ body.action-sheet-open {
 }
 #menuBtn {
   order: 3;
-  margin-left: auto;
+  /* no margin-left:auto — it would eat the free space and push the title off-center;
+     .top-bar-title (flex:1) already centers the app name between the two buttons */
+  flex: 0 0 auto;
 }
 
 /* === PRIMARY NAVIGATION (desktop) === */
