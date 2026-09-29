@@ -857,11 +857,14 @@ Do not update `sw.js` merely because existing file contents changed.
 
 **Fetch strategy (v4.0+).** Do not change it back to cache-first for the app
 shell. Navigations, `index.html`, `css/*` and `js/*` are NETWORK FIRST; the
-cache is only the offline fallback. Reason: `__BUILD_ID__` is substituted only
-in the GitHub Actions job, which does not run for the Cloudflare Pages
-production site, so `plan-zmian-__BUILD_ID__` never changes there and a new
-deploy stayed invisible. Icons/images/fonts stay cache-first with background
-revalidation. `/api/*` is never served stale, `/api/admin/*` is never cached.
+cache is only the offline fallback. Cloudflare Pages substitutes __BUILD_ID__
+at build time
+(`sed -i "s/__BUILD_ID__/${CF_PAGES_COMMIT_SHA}/g" sw.js`), so the cache name
+does change per commit. Network-first is kept deliberately: a stale cache must
+never be able to shadow a new deploy, and it does not depend on the build
+command being configured correctly. Icons/images/fonts stay cache-first with
+background revalidation. `/api/*` is never served stale, `/api/admin/*` is
+never cached.
 
 **Local development.** The Service Worker is not registered on
 `localhost` / `127.0.0.1` / `file://`; `js/pwa.js` unregisters existing workers

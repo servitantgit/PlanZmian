@@ -638,12 +638,12 @@ normal publishing after Phase 2.
 Fetch strategy is split by resource type (v4.0+):
 
 App shell — navigations, index.html, css/*, js/* — is NETWORK FIRST.
-The cached copy is only the offline fallback. This is essential: the
-cache name is plan-zmian-<BUILD_ID>, and __BUILD_ID__ is substituted only
-in the GitHub Actions deploy job, which does not run for the Cloudflare
-Pages production site. With a cache-first strategy the cache name never
-changed there, so new deploys stayed invisible until the worker was
-unregistered by hand.
+The cached copy is only the offline fallback. Cloudflare Pages substitutes
+__BUILD_ID__ at build time
+(sed -i "s/__BUILD_ID__/${CF_PAGES_COMMIT_SHA}/g" sw.js), so the cache name
+does change per commit and cache-first would mostly work. Network-first is
+kept because a stale cache must never be able to shadow a new deploy, and
+because it does not depend on the build command being configured correctly.
 
 Everything else (icons, images, fonts) is CACHE FIRST with background
 revalidation. /api/* is never served stale; /api/admin/* is never cached.
