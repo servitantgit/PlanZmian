@@ -4,8 +4,15 @@
    ================================================================ */
 
 /* === ADMIN EMAIL LIST ===
-   Public in the code — safe.
-   Knowing the email doesn't grant access — a Google login is still required. */
+   Public in the code — safe. Knowing the email doesn't grant access:
+   a Google login is still required, and the server enforces its own
+   list via the ADMIN_EMAILS Cloudflare Secret (functions/_lib/auth.js).
+   Any real write goes through /api/admin/*, which checks the secret.
+
+   KEEP IN SYNC with the ADMIN_EMAILS secret on Cloudflare. A mismatch is
+   only a UI inconsistency (the client shows the Admin Center, the API
+   answers 403), but it looks like a bug to the user, so never add an
+   address here without adding it to the secret too, and vice versa. */
 const ADMIN_EMAILS = ['servitant@gmail.com'];
 
 /* === ADMIN STATE CHECK === */

@@ -91,6 +91,27 @@ mustInclude('docs/index.html', 'navigator.standalone', 'iOS standalone detection
 mustInclude('docs/sw.js', 'caches.delete', 'legacy worker wipes the stale caches');
 mustInclude('docs/sw.js', 'registration.unregister', 'legacy worker unregisters itself');
 
+// --- admin: client list must not drift into extra accounts ---
+{
+  const adminSrc = read('js/admin.js');
+  const m = adminSrc.match(/const ADMIN_EMAILS\s*=\s*\[([\s\S]*?)\]/);
+  if (!m) {
+    fails.push('js/admin.js: ADMIN_EMAILS list not found');
+  } else {
+    const emails = (m[1].match(/'[^']+'/g) || []).map((s) => s.replace(/'/g, ''));
+    if (emails.length !== 1 || emails[0] !== 'servitant@gmail.com') {
+      fails.push(
+        'js/admin.js: ADMIN_EMAILS must be exactly [servitant@gmail.com], found [' +
+          emails.join(', ') +
+          '] — keep it in sync with the ADMIN_EMAILS Cloudflare Secret'
+      );
+    } else {
+      oks.push('admin list is exactly [servitant@gmail.com]');
+    }
+  }
+  mustInclude('functions/_lib/auth.js', 'env.ADMIN_EMAILS', 'server enforces its own admin list');
+}
+
 // report
 console.log('Smoke checks\n');
 for (const line of oks) console.log('  ✓ ' + line);
