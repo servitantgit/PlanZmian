@@ -22,8 +22,8 @@ A PWA for managing shift schedules of 4 brigades working a 3-shift system (Morni
 - 📝 **Notes** on any day
 - 🔍 **Search** across shifts, days off and vacations
 - ⚖️ **Brigade comparison** (Ctrl+click)
-- 🎨 **2 themes**: light/dark (toggle in the top bar)
-- 🌐 **Multilingual**: Polish, English, Ukrainian (🌐 switcher in the top bar)
+- 🎨 **2 themes**: light/dark (Settings → Appearance)
+- 🌐 **Multilingual**: Polish, English, Ukrainian (Settings → General)
 - 📱 **PWA** — install on your phone, offline mode, notifications
 - 📱 **App sharing** — link + QR code + native sharing (SMS, messengers)
 - 🔄 **Auto-update** — automatic new-version notice, applied with one click
@@ -248,7 +248,7 @@ Graffik/
 
 ## 🌐 Languages
 
-The app supports 3 languages (pick one with the 🌐 button in the top bar):
+The app supports 3 languages (Settings → General):
 
 - 🇵🇱 **Polski** (default)
 - 🇺🇸 **English**

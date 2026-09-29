@@ -65,7 +65,8 @@ These areas were manually repaired after the large refactor and must not be rede
 - Month/Year control placement;
 - mobile bottom navigation;
 - current Google Drive card;
-- current GitHub Pages deployment workflow;
+- the legacy GitHub Pages redirect stub on the `gh-pages` branch (and the
+  absence of a deploy workflow for it);
 - current factory-draft storage concept;
 - current Admin Center entry point;
 - current factory editor period synchronization;
@@ -852,13 +853,46 @@ Any new production JS or CSS file must be registered in both:
 - `index.html`
 - `sw.js`
 
-Do not update `sw.js` merely because existing file contents changed. Cache versioning is handled by `__BUILD_ID__`.
+Do not update `sw.js` merely because existing file contents changed.
+
+**Fetch strategy (v4.0+).** Do not change it back to cache-first for the app
+shell. Navigations, `index.html`, `css/*` and `js/*` are NETWORK FIRST; the
+cache is only the offline fallback. Reason: `__BUILD_ID__` is substituted only
+in the GitHub Actions job, which does not run for the Cloudflare Pages
+production site, so `plan-zmian-__BUILD_ID__` never changes there and a new
+deploy stayed invisible. Icons/images/fonts stay cache-first with background
+revalidation. `/api/*` is never served stale, `/api/admin/*` is never cached.
+
+**Local development.** The Service Worker is not registered on
+`localhost` / `127.0.0.1` / `file://`; `js/pwa.js` unregisters existing workers
+and clears caches there. Do not "fix" that — it is what keeps local edits
+visible. `window.purgeServiceWorkersAndCaches()` is available for a full reset.
+
+**Multiple workers.** If an origin has more than one registration, `js/pwa.js`
+keeps the one owning the active worker and unregisters the rest.
 
 The fetch handler must ignore unsupported protocols. Preserve:
 
     if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
 Do not cache temporary verification files.
+
+---
+
+## 12a. DEPLOYMENT TOPOLOGY
+
+- `cloudflare` — source of truth; Cloudflare Pages auto-deploys
+  `https://planzmian.pages.dev/` from it. CI runs here.
+- `main` — kept in sync with `cloudflare` (CI + safe mirror).
+- `gh-pages` — legacy `https://servitantgit.github.io/Graffik/`, now a redirect
+  stub only: `.nojekyll`, `index.html`, `sw.js` at the branch **root** (Pages
+  serves the branch root — do not leave them in a subfolder).
+  **There is no deploy workflow for it.** `.github/workflows/deploy.yml` was
+  deleted after a `workflow_dispatch` run from an old commit overwrote the stub
+  with the previous app. To change the stub, commit directly to `gh-pages`.
+
+Never re-add a GitHub Pages deploy workflow, and never point it at the app
+folder. The legacy origin must contain nothing but the redirect stub.
 
 ---
 

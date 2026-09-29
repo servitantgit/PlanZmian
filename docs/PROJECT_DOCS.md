@@ -10,14 +10,24 @@ Plan Zmian is a local-first Progressive Web App for a four-brigade factory
 shift schedule.
 
 - Production URL: https://planzmian.pages.dev/
-- Hosting: Cloudflare Pages (https://planzmian.pages.dev/)
+- Hosting: Cloudflare Pages (auto-deploy from the `cloudflare` branch)
+- Legacy URL: https://servitantgit.github.io/Graffik/ — redirect stub only, see §9
 - Stack: Vanilla JavaScript, HTML, CSS, localStorage, Service Worker
 - JavaScript architecture: classic browser scripts, shared global scope
 - No npm runtime dependencies
 - No build system
 - No ES modules
-- No backend server
+- No backend server (Cloudflare Pages Functions + D1 for the factory schedule)
 - Languages: Polish, English, Ukrainian
+
+Branding: the app was called *Grafik Gillette* until v4.0 and is now
+*Plan Zmian*. The user-visible name changed (page titles, manifest, i18n
+`appName`, notifications, ICS `PRODID`, privacy policy, docs), while all
+storage identifiers were intentionally **kept** for data compatibility —
+`localStorage` keys (`gillette_*`, `grafik_*`), Google Drive file names
+(`grafik-gillette-data*.json`), schedule id `gillette`, the
+`js/schedules/gillette/` folder and the ICS event `UID` suffix `@gillette`.
+Do not "fix" these identifiers — renaming them would orphan existing user data.
 
 Primary schedule entities:
 
@@ -625,19 +635,32 @@ for offline mirrors or emergency git deploy. It is **not** required for
 normal publishing after Phase 2.
 
 8. Service Worker and Deployment
-sw.js uses a build ID placeholder:
+Fetch strategy is split by resource type (v4.0+):
 
-const CACHE_NAME = 'plan-zmian-' + '__BUILD_ID__';
-GitHub Actions replaces __BUILD_ID__ with the current commit hash during
-deployment.
+App shell — navigations, index.html, css/*, js/* — is NETWORK FIRST.
+The cached copy is only the offline fallback. This is essential: the
+cache name is plan-zmian-<BUILD_ID>, and __BUILD_ID__ is substituted only
+in the GitHub Actions deploy job, which does not run for the Cloudflare
+Pages production site. With a cache-first strategy the cache name never
+changed there, so new deploys stayed invisible until the worker was
+unregistered by hand.
 
-Rules:
+Everything else (icons, images, fonts) is CACHE FIRST with background
+revalidation. /api/* is never served stale; /api/admin/* is never cached.
 
-New production JS/CSS files must be registered in both index.html and
-sw.js.
-Existing-file content changes do not require manual cache version changes.
-Do not add temporary test files to the Service Worker cache list.
+Additional rules:
+
 Preserve the unsupported-protocol filter in the fetch handler.
+New production JS/CSS files must be registered in index.html and sw.js.
+Existing-file content changes need no manual cache version bump.
+Do not add temporary test files to the Service Worker cache list.
+The Service Worker is NOT registered on localhost / 127.0.0.1 / file://
+(js/pwa.js) — local edits must always come from disk; existing workers
+and caches are dropped on those origins.
+js/pwa.js unregisters leftover registrations when an origin has more than
+one, and exposes window.purgeServiceWorkersAndCaches() for a full reset
+(unregister every worker, delete every cache, reload).
+
 9. Tests and Quality Checks
 Run all unit tests:
 
@@ -656,20 +679,56 @@ tests/notes-tracking.test.js
 tests/overtime-logic.test.js
 tests/schedules-core.test.js
 tests/sync-tracking.test.js
+tests/remote-schedule.test.js
+tests/seed-schedule.test.js
 Browser UI, Google OAuth, localStorage integration, and Service Worker behavior
 require manual testing.
 
-10. Current Limitations
+Note when editing test files: a test() callback truncated mid-body registers
+successfully but never runs, and node:test then reports every following test
+in the same file as "cancelledByParent". If a whole block of tests is
+cancelled, look for orphaned statements left at the end of the file outside
+any test() call.
+
+11. Legacy URL and Deployment Topology
+Branches:
+
+cloudflare — source of truth. Cloudflare Pages auto-deploys
+https://planzmian.pages.dev/ from it; CI runs here.
+main — kept in sync with cloudflare, used by CI and as a safe mirror.
+gh-pages — the legacy GitHub Pages site, now only a redirect stub
+(.nojekyll, index.html, sw.js committed at the branch ROOT). No deployment
+workflow exists for it: a workflow_dispatch run from an old commit had
+already overwritten the stub once, so .github/workflows/deploy.yml was
+deleted. Update the stub by committing directly to gh-pages.
+
+The legacy site (https://servitantgit.github.io/Graffik/):
+GitHub Pages cannot issue HTTP 301s, so redirect/index.html uses a
+<meta http-equiv="refresh"> (no-JS fallback) plus
+window.location.replace() (instant, keeps the old URL out of history), and
+sets rel="canonical" + noindex.
+redirect/sw.js is a SELF-DESTRUCTING worker: install -> skipWaiting,
+activate -> delete every cache of the origin + unregister itself +
+clients.claim(), fetch -> always network. Without it the previous
+cache-first worker would keep serving the old app to returning visitors and
+they would never see the redirect.
+An installed PWA is bound to its own origin, and a cross-origin redirect is
+blocked in standalone display mode. The stub detects
+(display-mode: standalone) / navigator.standalone and shows manual re-install
+steps, because the redirect would silently fail there.
+
+12. Current Limitations
 State is global across classic scripts.
 Google Drive sync does not perform a full field-level merge.
-A static GitHub Pages application cannot safely store a Google refresh token.
 Google access tokens have limited lifetimes.
 Browser/PWA background execution is not reliable for scheduled activity.
+An installed PWA cannot be moved to a new domain — users must delete it and
+install again from the new URL.
 Some older documentation and historical changelog entries may describe
 removed architecture; this document reflects the current intended design.
 Some legacy CSS and runtime compatibility code remain intentionally during
 stabilization.
-11. AI and Engineering Rules
+12. AI and Engineering Rules
 The authoritative engineering rules are in:
 
 docs/AGENT.md

@@ -22,8 +22,8 @@ Aplikacja PWA do zarządzania grafikami zmian dla 4 brygad pracujących w system
 - 📝 **Notatki** do dowolnych dni
 - 🔍 **Wyszukiwanie** zmian, wolnych, urlopów
 - ⚖️ **Porównywanie brygad** (Ctrl+klik)
-- 🎨 **2 motywy**: jasny/ciemny (przełącznik w top-bar)
-- 🌐 **Wielojęzyczność**: polski, angielski, ukraiński (przełącznik 🌐 w top-bar)
+- 🎨 **2 motywy**: jasny/ciemny (Ustawienia → Wygląd)
+- 🌐 **Wielojęzyczność**: polski, angielski, ukraiński (Ustawienia → Ogólne)
 - 📱 **PWA** — instalacja na telefonie, tryb offline, powiadomienia
 - 📱 **Udostępnianie aplikacji** — link + kod QR + natywne udostępnianie (SMS, messengers)
 - 🔄 **Auto-update** — automatyczne powiadomienie o nowej wersji z jednym kliknięciem
