@@ -80,6 +80,15 @@ mustInclude('js/i18n/uk.js', 'menuDriveLogin', 'uk menuDriveLogin');
 mustInclude('js/i18n/en.js', 'menuDriveLogin', 'en menuDriveLogin');
 mustInclude('js/i18n/pl.js', 'menuDriveLogin', 'pl menuDriveLogin');
 
+// --- legacy GitHub Pages redirect stub (servitantgit.github.io/Graffik) ---
+mustExist('redirect/index.html');
+mustExist('redirect/sw.js');
+mustInclude('redirect/index.html', 'https://planzmian.pages.dev/', 'redirect targets the new address');
+mustInclude('redirect/index.html', 'http-equiv="refresh"', 'redirect has a no-JS meta refresh');
+mustInclude('redirect/index.html', 'location.replace', 'redirect uses location.replace (no back-button loop)');
+mustInclude('redirect/sw.js', 'caches.delete', 'legacy worker wipes the stale caches');
+mustInclude('redirect/sw.js', 'registration.unregister', 'legacy worker unregisters itself');
+
 // report
 console.log('Smoke checks\n');
 for (const line of oks) console.log('  ✓ ' + line);

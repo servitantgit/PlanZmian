@@ -1,8 +1,17 @@
-name: Deploy to GitHub Pages
+name: Deploy legacy redirect to GitHub Pages
 
+# The live app is deployed to Cloudflare Pages (https://planzmian.pages.dev/).
+# The old GitHub Pages URL (https://servitantgit.github.io/Graffik/) is kept only
+# as a stub that redirects visitors to the new address. GitHub Pages cannot issue
+# HTTP 301s, so the stub does a meta-refresh + JS redirect (see redirect/index.html)
+# and installs a self-destructing service worker that wipes the stale caches of
+# the previous cache-first app on that origin.
 on:
   push:
-    branches: [main]
+    branches: [main, cloudflare]
+    paths:
+      - 'redirect/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 # Prevent overlapping deploys that can leave multiple page artifacts
@@ -23,21 +32,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Replace BUILD_ID in sw.js
-        run: |
-          BUILD_ID=$(git rev-parse --short HEAD)
-          if [ -f sw.js ]; then
-            sed -i "s/__BUILD_ID__/${BUILD_ID}/g" sw.js
-            echo "Cache version set to: plan-zmian-${BUILD_ID}"
-          fi
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          # Only the redirect stub — the app itself lives on Cloudflare Pages
+          path: redirect
 
   deploy:
     needs: build

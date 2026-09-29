@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!-- ================================================================
+     GRAFIK GILLETTE -> PLAN ZMIAN
+     Permanent redirect stub for the legacy GitHub Pages URL
+     (https://servitantgit.github.io/Graffik/).
+
+     GitHub Pages does not support HTTP 301 redirects, so this page does
+     a meta-refresh (works without JavaScript) + a JS redirect (instant),
+     and shows a human-readable notice with a manual link as a fallback.
+
+     Deployed by .github/workflows/deploy.yml (path: redirect/).
+     ================================================================ -->
+<html lang="uk">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Instant redirect, no JS required -->
+  <meta http-equiv="refresh" content="0; url=https://planzmian.pages.dev/">
+  <title>Plan Zmian — переїзд на нову адресу</title>
+  <!-- Tell search engines the content moved -->
+  <link rel="canonical" href="https://planzmian.pages.dev/">
+  <meta name="robots" content="noindex, follow">
+  <link rel="icon" type="image/png" href="https://planzmian.pages.dev/icons/icon-192.png">
+  <script>
+    // Register the self-destructing worker so the OLD cache-first worker
+    // (still controlling returning visitors) gets replaced: it wipes every
+    // cache of this origin and unregisters itself.
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js').catch(function () {});
+      });
+    }
+  </script>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #67e8f9;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f4f7fb;
+        --card: #fff;
+        --text: #1e293b;
+        --muted: #64748b;
+        --accent: #1e3c72;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .card {
+      max-width: 520px;
+      width: 100%;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 32px 28px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .25);
+      text-align: center;
+    }
+
+    .icon {
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    h1 {
+      margin: 16px 0 8px;
+      font-size: 22px;
+    }
+
+    p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .old {
+      text-decoration: line-through;
+      opacity: .7;
+    }
+
+    a.btn {
+      display: inline-block;
+      padding: 12px 22px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    a.link {
+      display: inline-block;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <div class="icon">📅</div>
+    <h1>Застосунок переїхав</h1>
+    <p>
+      <span class="old">Grafik Gillette</span> тепер називається <strong>Plan Zmian</strong>
+      і доступний на новій адресі. Перенаправляємо автоматично…
+    </p>
+    <a class="btn" href="https://planzmian.pages.dev/">Перейти →</a>
+    <br>
+    <a class="link" href="https://planzmian.pages.dev/">https://planzmian.pages.dev/</a>
+  </main>
+
+  <script>
+    // Instant redirect (meta refresh above is the no-JS fallback).
+    // `replace` so the legacy URL does not stay in the back/forward history.
+    window.location.replace('https://planzmian.pages.dev/');
+  </script>
+</body>
+
+</html>
