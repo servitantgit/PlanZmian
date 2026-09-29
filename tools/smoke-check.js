@@ -86,6 +86,8 @@ mustExist('redirect/sw.js');
 mustInclude('redirect/index.html', 'https://planzmian.pages.dev/', 'redirect targets the new address');
 mustInclude('redirect/index.html', 'http-equiv="refresh"', 'redirect has a no-JS meta refresh');
 mustInclude('redirect/index.html', 'location.replace', 'redirect uses location.replace (no back-button loop)');
+mustInclude('redirect/index.html', 'display-mode: standalone', 'installed PWA is detected');
+mustInclude('redirect/index.html', 'navigator.standalone', 'iOS standalone detection');
 mustInclude('redirect/sw.js', 'caches.delete', 'legacy worker wipes the stale caches');
 mustInclude('redirect/sw.js', 'registration.unregister', 'legacy worker unregisters itself');
 

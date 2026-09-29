@@ -117,26 +117,92 @@
       font-size: 13px;
       word-break: break-all;
     }
+
+    ol.steps {
+      text-align: left;
+      margin: 0 0 20px;
+      padding-left: 22px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    ol.steps strong {
+      color: var(--text);
+    }
+
+    .hint {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(148, 163, 184, .25);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
   </style>
 </head>
 
 <body>
-  <main class="card">
-    <div class="icon">📅</div>
-    <h1>Застосунок переїхав</h1>
-    <p>
-      <span class="old">Grafik Gillette</span> тепер називається <strong>Plan Zmian</strong>
-      і доступний на новій адресі. Перенаправляємо автоматично…
-    </p>
-    <a class="btn" href="https://planzmian.pages.dev/">Перейти →</a>
-    <br>
-    <a class="link" href="https://planzmian.pages.dev/">https://planzmian.pages.dev/</a>
+  <main class="card" id="card">
+    <!-- Installed PWA: a cross-origin redirect is blocked in standalone mode,
+         so we show manual instructions instead of a blind redirect. -->
+    <div id="app-block" hidden>
+      <div class="icon">📅</div>
+      <h1>Застосунок переїхав</h1>
+      <p>
+        <span class="old">Grafik Gillette</span> тепер називається <strong>Plan Zmian</strong>
+        і встановлений додаток належить старій адресі. Перенесіть його:
+      </p>
+      <ol class="steps">
+        <li>Видаліть цей застосунок з домашнього екрана <strong>(видалити застосунок)</strong>.</li>
+        <li>Відкрийте <strong>https://planzmian.pages.dev/</strong> у браузері.</li>
+        <li>Натисніть <strong>«Встановити»</strong> / <strong>«Додати на головний екран»</strong>.</li>
+      </ol>
+      <a class="btn" href="https://planzmian.pages.dev/">Відкрити нову адресу →</a>
+      <p class="hint">
+        Установлений додаток прив’язаний до свого домену — автоматично перенести його неможливо,
+        його потрібно встановити заново з нової адреси. Ваші дані (Drive, розклад) не змінюються.
+      </p>
+    </div>
+
+    <!-- Regular browser tab: redirect right away. -->
+    <div id="web-block">
+      <div class="icon">📅</div>
+      <h1>Застосунок переїхав</h1>
+      <p>
+        <span class="old">Grafik Gillette</span> тепер називається <strong>Plan Zmian</strong>
+        і доступний на новій адресі. Перенаправляємо автоматично…
+      </p>
+      <a class="btn" href="https://planzmian.pages.dev/">Перейти →</a>
+      <br>
+      <a class="link" href="https://planzmian.pages.dev/">https://planzmian.pages.dev/</a>
+    </div>
   </main>
 
   <script>
-    // Instant redirect (meta refresh above is the no-JS fallback).
-    // `replace` so the legacy URL does not stay in the back/forward history.
-    window.location.replace('https://planzmian.pages.dev/');
+    (function () {
+      var NEW_URL = 'https://planzmian.pages.dev/';
+
+      // An installed PWA runs in standalone display mode, where a cross-origin
+      // navigation is blocked — the redirect would look like "nothing happens".
+      // Detect it and show the manual re-install steps instead.
+      var standalone =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.matchMedia('(display-mode: fullscreen)').matches ||
+        window.matchMedia('(display-mode: minimal-ui)').matches ||
+        window.navigator.standalone === true;
+
+      if (standalone) {
+        document.getElementById('app-block').hidden = false;
+        document.getElementById('web-block').hidden = true;
+        return; // no redirect inside the installed app
+      }
+
+      // Regular browser tab: instant redirect (meta refresh above is the
+      // no-JS fallback). `replace` so the legacy URL does not stay in the
+      // back/forward history.
+      window.location.replace(NEW_URL);
+    })();
   </script>
 </body>
 
