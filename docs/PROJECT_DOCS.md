@@ -733,6 +733,11 @@ Some older documentation and historical changelog entries may describe
 removed architecture; this document reflects the current intended design.
 Some legacy CSS and runtime compatibility code remain intentionally during
 stabilization.
+
+Future product ideas (multi-tenant subdomains, other backlog) are not in
+scope until explicitly scheduled. See docs/future.md (notes only; do not
+implement from that file without a separate task).
+
 12. AI and Engineering Rules
 The authoritative engineering rules are in:
 
