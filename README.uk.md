@@ -154,7 +154,7 @@ node tests/run.js
 ### Структура проєкту
 
 ```
-Graffik/
+PlanZmian/
 ├── index.html          # HTML (без inline CSS)
 │   ├── privacy.html          # Privacy Policy (uk/en/pl)
 ├── manifest.json       # PWA-манифест

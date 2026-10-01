@@ -225,7 +225,7 @@ function Format-FileSize {
 function Get-ProjectTree {
     param([string]$RootPath, [int]$MaxDepth = 4)
     $script:tree = @()
-    $script:tree += "Graffik/"
+    $script:tree += "PlanZmian/"
 
     function Add-TreeLevel {
         param([string]$Path, [string]$Prefix, [int]$CurrentDepth, [int]$MaxDepth)

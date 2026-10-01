@@ -29,6 +29,7 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/).
 
 ### Changed
 
+- **Stale `Graffik` naming removed outside the historical record.** The repository is `servitantgit/PlanZmian` and the app is *Plan Zmian*, so the remaining leftovers were corrected: project-tree root label in `README.md` / `README.en.md` / `README.uk.md` and in `tools/export-code.ps1` (generated export header), the `tools/sync_schedule_assets.py` usage line, the legacy URL + section reference in `docs/PROJECT_DOCS.md` §1 (now `…/PlanZmian/`, §11 — the stub actually served there), and the release/compare link definitions at the bottom of this file. **Intentionally untouched:** prose that documents the rename itself (`docs/AGENT.md` §12a, `docs/PROJECT_DOCS.md` §11, changelog history, the rename notice in `docs/index.html`) and every storage identifier that carries the old name (`localStorage` `grafik_*` / `gillette_*`, Drive file names `grafik-gillette-data*.json`, schedule id `gillette`) — renaming those would orphan existing user data.
 - **About panel points at the renamed repository.** The `GitHub (developer)` row in ☰ → About still linked to `github.com/servitantgit/Graffik` after the repository rename; `js/app-shell.js` now uses `https://github.com/servitantgit/PlanZmian` in both the `href` and the visible label, matching the README badges/links (pl/en/uk). i18n keys (`menuGitHub`, `aboutDeveloper`) are unchanged.
 - **Admin list is a single account.** `js/admin.js` `ADMIN_EMAILS` is now exactly `['servitant@gmail.com']`; the extra address was removed after the Cloudflare `ADMIN_EMAILS` secret had already been narrowed. Note the two lists are independent: the client list only drives the Admin Center UI (`body.admin-mode`, `.admin-only`), while every real write goes through `/api/admin/*`, which validates the `ADMIN_EMAILS` secret in `functions/_lib/auth.js`. A mismatch is a UI inconsistency (panel visible, API answers 403), not a security hole. A comment in `js/admin.js` states the sync requirement and a smoke check now asserts the exact list, so drift fails CI.
 - **Consolidated to a single branch (`main`).** The repository carried three branches: `cloudflare` (Cloudflare Pages source), `main` (mirror + CI) and `gh-pages` (legacy redirect stub). Renaming the repository `Graffik` → `PlanZmian` also changed the GitHub Pages path (`…/Graffik/` → `…/PlanZmian/`) and reset the Pages source to `main` root, which made the legacy URL serve a second, stale copy of the app. The redirect stub moved from the `gh-pages` branch root into `docs/` on `main` (`docs/index.html`, `docs/sw.js`, `docs/.nojekyll`), so GitHub Pages can serve it via Source = branch `main`, Folder = `/docs` while the repository root still feeds Cloudflare Pages. `main` is now the only branch to push to; `cloudflare` and `gh-pages` can be deleted. `docs/AGENT.md` §12a and `docs/PROJECT_DOCS.md` §11 document the topology, and README badges/links (pl/en/uk) point at `servitantgit/PlanZmian`.
@@ -324,13 +325,13 @@ Consolidates months of accumulated improvements around the v4.0 UI shell refacto
 
 Historia wcześniejszych wersji nie była śledzona.
 
-[Unreleased]: https://github.com/servitantgit/Graffik/compare/v4.0.0...HEAD
-[4.0.0]: https://github.com/servitantgit/Graffik/releases/tag/v4.0.0
-[3.7.0]: https://github.com/servitantgit/Graffik/releases/tag/v3.7.0
-[3.6.2]: https://github.com/servitantgit/Graffik/releases/tag/v3.6.2
-[3.6.0]: https://github.com/servitantgit/Graffik/releases/tag/v3.6.0
-[3.5.1]: https://github.com/servitantgit/Graffik/releases/tag/v3.5.1
-[3.5.0]: https://github.com/servitantgit/Graffik/releases/tag/v3.5.0
-[3.4.0]: https://github.com/servitantgit/Graffik/releases/tag/v3.4.0
-[3.3.0]: https://github.com/servitantgit/Graffik/releases/tag/v3.3.0
-[3.2.0]: https://github.com/servitantgit/Graffik/releases/tag/v3.2.0
+[Unreleased]: https://github.com/servitantgit/PlanZmian/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/servitantgit/PlanZmian/releases/tag/v4.0.0
+[3.7.0]: https://github.com/servitantgit/PlanZmian/releases/tag/v3.7.0
+[3.6.2]: https://github.com/servitantgit/PlanZmian/releases/tag/v3.6.2
+[3.6.0]: https://github.com/servitantgit/PlanZmian/releases/tag/v3.6.0
+[3.5.1]: https://github.com/servitantgit/PlanZmian/releases/tag/v3.5.1
+[3.5.0]: https://github.com/servitantgit/PlanZmian/releases/tag/v3.5.0
+[3.4.0]: https://github.com/servitantgit/PlanZmian/releases/tag/v3.4.0
+[3.3.0]: https://github.com/servitantgit/PlanZmian/releases/tag/v3.3.0
+[3.2.0]: https://github.com/servitantgit/PlanZmian/releases/tag/v3.2.0

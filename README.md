@@ -154,7 +154,7 @@ Działa na każdym Node 18+. Forma `node --test "tests/*.test.js"` działa tylko
 ### Struktura projektu
 
 ```
-Graffik/
+PlanZmian/
 ├── index.html          # HTML (bez inline CSS)
 │   ├── privacy.html          # Privacy Policy (uk/en/pl)
 ├── manifest.json       # PWA manifest

@@ -6,7 +6,7 @@ Scans js/schedules/gillette/YYYY.js and:
   1. Ensures <script src="js/schedules/gillette/YYYY.js"> in index.html
   2. Ensures './js/schedules/gillette/YYYY.js' in sw.js ASSETS
 
-Usage (from repo root or Graffik/):
+Usage (from repo root or PlanZmian/):
   python3 tools/sync_schedule_assets.py
 
 After Admin Export: put YYYY.js into js/schedules/gillette/, run this, then git commit + push.
