@@ -504,14 +504,17 @@ Stored in:
 
 Public schedule data is git-tracked and visible to everyone. Do not modify `js/schedules/gillette/2026.js` during UI or infrastructure tasks. Any schedule-data correction requires explicit owner confirmation.
 
-### 7.1a Remote factory schedule (branch `main`, Phase 1, READ-ONLY)
+### 7.1a Remote factory schedule (branch `main`: Phase 1 read + Phase 2 admin Publish)
 
-On branch `main` the public factory schedule can additionally come from
-Cloudflare D1. Spec: `docs/ADMIN_BACKEND_SPEC.md`; details in
-`docs/PROJECT_DOCS.md` §3.2.
+On branch `main` the public factory schedule comes from Cloudflare D1.
+Phase 1 (public read) + Phase 1.5 (seed) + Phase 2 (admin Publish) are
+**live**; Phase 3 (history UI / rollback) is not built — `schedule_history`
+rows are already written on every Publish. Spec: `docs/ADMIN_BACKEND_SPEC.md`;
+details in `docs/PROJECT_DOCS.md` §3.2.
 
-- Server: `functions/api/schedule.js` — Pages Function (ES module, the ONLY
-  place where ES modules are allowed), public `GET /api/schedule`,
+- Server: `functions/api/schedule.js` — Pages Function (ES module; every file
+  under `functions/` is an ES module, the browser app is not), public
+  `GET /api/schedule`,
   `Cache-Control: no-cache` + `ETag` / `If-None-Match` → `304`,
   empty DB → `200 { years: {} }`, missing `env.DB` / DB error →
   `503 { error: 'unavailable' }`. `updatedBy` must never appear in a response.
@@ -532,8 +535,22 @@ Cloudflare D1. Spec: `docs/ADMIN_BACKEND_SPEC.md`; details in
 - Seed: `tools/seed-schedule.mjs` → `migrations/seed_2026.sql`
   (`revision = 1`, `updated_by = 'seed'`). Hours are copied VERBATIM from
   `2026.js` and never recomputed (October / brigade A = 160 is intentional).
-- Phase 2 (PUT / auth / Publish) and Phase 3 (history / rollback) are out of
-  scope until Dancer requests them. `js/schedules/remote.js` never writes.
+- Write path (admins only, Phase 2, LIVE): `functions/_lib/auth.js`
+  `requireAdmin(request, env)` — Google Bearer → `tokeninfo`, `aud`/`azp` ==
+  `GOOGLE_CLIENT_ID`, `email_verified`, e-mail ∈ `ADMIN_EMAILS` (Cloudflare
+  Secret, cached ≤60s per isolate). `functions/api/admin/schedule/[year].js` —
+  `PUT /api/admin/schedule/:year` with `{ data, hours, expectedRevision }`,
+  `409 revision_conflict` on mismatch, upsert `schedule_years` + insert
+  `schedule_history`. `functions/_lib/validate.mjs` is a pure validator and
+  **never recomputes hours**; `updatedBy` is never returned to a client.
+  Client entry point: `publishFactoryScheduleYear(year)` in
+  `js/admin-center.js` (📤 on the factory editor bar, Publish in Admin
+  Center). `js/schedules/remote.js` still **never writes** — read path only.
+- Admin identity: `js/admin.js` `ADMIN_EMAILS` (`['servitant@gmail.com']`)
+  drives the Admin Center UI only and must stay in sync with the Cloudflare
+  `ADMIN_EMAILS` Secret that the server enforces; drift means a visible
+  panel answering 403. A smoke check asserts the exact client list.
+- Phase 3 (history list + rollback UI/API) is out of scope until requested.
 - Failure policy: any network/parse error is silently ignored; the app must
   behave exactly as before (static `2026.js` + local cache).
 
