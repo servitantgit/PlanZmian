@@ -10,7 +10,7 @@ Plan Zmian is a local-first Progressive Web App for a four-brigade factory
 shift schedule.
 
 - Production URL: https://planzmian.pages.dev/
-- Hosting: Cloudflare Pages (auto-deploy from the `cloudflare` branch)
+- Hosting: Cloudflare Pages (auto-deploy from the repository root on branch `main`, see §11)
 - Legacy URL: https://servitantgit.github.io/PlanZmian/ — redirect stub only, see §11
 - Stack: Vanilla JavaScript, HTML, CSS, localStorage, Service Worker
 - JavaScript architecture: classic browser scripts, shared global scope

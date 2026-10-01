@@ -1,7 +1,7 @@
 # AGENT.md — Plan Zmian engineering rules
 
 **Status:** mandatory
-**Updated:** 2026-09-29
+**Updated:** 2026-10-01
 **Project state:** Cloudflare D1 factory schedule live (Phase 1 read + Phase 2 admin Publish). Static `gillette/YYYY.js` is fallback only. Phase 3 history/rollback not started. Drive personal sync unchanged.
 **Owner language:** Ukrainian
 **Primary UI language:** Polish
@@ -65,7 +65,7 @@ These areas were manually repaired after the large refactor and must not be rede
 - Month/Year control placement;
 - mobile bottom navigation;
 - current Google Drive card;
-- the legacy GitHub Pages redirect stub on the `gh-pages` branch (and the
+- the legacy GitHub Pages redirect stub in `docs/` on `main` (and the
   absence of a deploy workflow for it);
 - current factory-draft storage concept;
 - current Admin Center entry point;
@@ -504,9 +504,9 @@ Stored in:
 
 Public schedule data is git-tracked and visible to everyone. Do not modify `js/schedules/gillette/2026.js` during UI or infrastructure tasks. Any schedule-data correction requires explicit owner confirmation.
 
-### 7.1a Remote factory schedule (branch `cloudflare`, Phase 1, READ-ONLY)
+### 7.1a Remote factory schedule (branch `main`, Phase 1, READ-ONLY)
 
-On branch `cloudflare` the public factory schedule can additionally come from
+On branch `main` the public factory schedule can additionally come from
 Cloudflare D1. Spec: `docs/ADMIN_BACKEND_SPEC.md`; details in
 `docs/PROJECT_DOCS.md` §3.2.
 

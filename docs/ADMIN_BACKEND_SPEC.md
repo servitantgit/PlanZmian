@@ -318,6 +318,13 @@ CREATE INDEX idx_history_year ON schedule_history (schedule_id, year, revision D
 
 ## 14. Гілка Cloudflare і співіснування з GitHub Pages (рішення Dancer)
 
+> **Статус розділу: історичний.** Топологія змінилась після консолідації — гілки
+> `cloudflare` і `gh-pages` видалені, лишилась одна `main`: корінь репозиторію =
+> застосунок (Cloudflare Pages), `docs/` = legacy redirect stub (GitHub Pages).
+> Див. `docs/AGENT.md` §12a і `docs/PROJECT_DOCS.md` §11. Правила нижче лишаються
+> чинними як пояснення рішень (Drive-сумісність, окремі origin-и, `functions/`), але
+> згадки гілок `cloudflare` / `gh-pages` і workflow `deploy.yml` більше неактуальні.
+
 Контекст: `main` (ребрендинг) лишається як є і продовжує деплоїтись на GitHub Pages для Gillette. Уся робота з цього ТЗ — в **окремій гілці** (назва: `cloudflare`, якщо Dancer не скаже інакше), яка деплоїться на Cloudflare Pages. Гілки розвиваються окремо.
 
 ### 14.1 Жорсткі правила для гілки
