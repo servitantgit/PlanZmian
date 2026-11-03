@@ -246,12 +246,33 @@ function sanitizePrefs(raw) {
 
 window.sanitizePrefs = sanitizePrefs;
 /**
+ * Safe localStorage.setItem — never throws on quota / private-mode failures.
+ * @param {string} key
+ * @param {string} value
+ * @returns {boolean} true if written
+ */
+function safeSetItem(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    console.warn('[core] localStorage.setItem failed for', key, e && e.name, e && e.message);
+    if (typeof showToast === 'function') {
+      try {
+        showToast('warning', typeof t === 'function' ? t('storageFull') || 'Storage full — changes may not persist' : 'Storage full — changes may not persist');
+      } catch (_) {}
+    }
+    return false;
+  }
+}
+
+/**
  * Persist UI/prefs to localStorage.
  * @param {object} p - prefs object
  * @param {boolean} [markSync=false] - if true, mark data as unsynced (for personal fields like urlopLimits)
  */
 function savePrefs(p, markSync) {
-  localStorage.setItem(LS_KEY, JSON.stringify(p));
+  if (!safeSetItem(LS_KEY, JSON.stringify(p))) return;
   if (markSync && typeof updateLastModified === 'function') updateLastModified();
 }
 function loadNotes() {
@@ -262,7 +283,7 @@ function loadNotes() {
   }
 }
 function saveNotes(n) {
-  localStorage.setItem(NOTES_KEY, JSON.stringify(n));
+  if (!safeSetItem(NOTES_KEY, JSON.stringify(n))) return;
   if (typeof updateLastModified === 'function') updateLastModified();
 }
 function loadUrlops() {
@@ -273,7 +294,7 @@ function loadUrlops() {
   }
 }
 function saveUrlops(u) {
-  localStorage.setItem(URLOPS_KEY, JSON.stringify(u));
+  if (!safeSetItem(URLOPS_KEY, JSON.stringify(u))) return;
   if (typeof updateLastModified === 'function') updateLastModified();
 }
 function loadCustomSchedule() {
@@ -284,7 +305,7 @@ function loadCustomSchedule() {
   }
 }
 function saveCustomSchedule(s) {
-  localStorage.setItem(CUSTOM_SCHEDULE_KEY, JSON.stringify(s));
+  if (!safeSetItem(CUSTOM_SCHEDULE_KEY, JSON.stringify(s))) return;
   if (typeof updateLastModified === 'function') updateLastModified();
 }
 function loadOvertimes() {
@@ -295,22 +316,22 @@ function loadOvertimes() {
   }
 }
 function saveOvertimes(o) {
-   localStorage.setItem(OVERTIMES_KEY, JSON.stringify(o));
-   if (typeof updateLastModified === 'function') updateLastModified();
- }
- 
- function loadFactoryDrafts() {
-   try {
-     return JSON.parse(localStorage.getItem(FACTORY_DRAFTS_KEY)) || {};
-   } catch (e) {
-     return {};
-   }
- }
- 
- function saveFactoryDrafts(drafts) {
-   localStorage.setItem(FACTORY_DRAFTS_KEY, JSON.stringify(drafts));
-   if (typeof updateLastModified === 'function') updateLastModified();
- }
+  if (!safeSetItem(OVERTIMES_KEY, JSON.stringify(o))) return;
+  if (typeof updateLastModified === 'function') updateLastModified();
+}
+
+function loadFactoryDrafts() {
+  try {
+    return JSON.parse(localStorage.getItem(FACTORY_DRAFTS_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveFactoryDrafts(drafts) {
+  if (!safeSetItem(FACTORY_DRAFTS_KEY, JSON.stringify(drafts))) return;
+  if (typeof updateLastModified === 'function') updateLastModified();
+}
  
  /* === Persistent state === */
  const prefs = loadPrefs();
