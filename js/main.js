@@ -6,18 +6,18 @@
 
 /* === SETTINGS DEFAULTS (v4.0.0 — General) === */
 prefs.startView = prefs.startView || 'dashboard';
-prefs.restoreLastView =
-  typeof prefs.restoreLastView === 'boolean' ? prefs.restoreLastView : true;
+prefs.restoreLastView = typeof prefs.restoreLastView === 'boolean' ? prefs.restoreLastView : true;
 
-let currentYear = prefs.year || 2026;
-let currentMonth = new Date().getMonth() + 1;
+/* Always open on the real current date. Saved prefs.year is intentionally
+   ignored on startup — user navigates to other years when needed. */
+const _startupNow = new Date();
+let currentYear = _startupNow.getFullYear();
+let currentMonth = _startupNow.getMonth() + 1;
 let selectedShift = prefs.shift || 'A';
-let selectedDay = null;
+let selectedDay = _startupNow.getDate();
 /* Startup view: URL parameters override everything (applyUrlParams below);
     otherwise honor restoreLastView, falling back to the start view. */
-let currentView = prefs.restoreLastView
-  ? prefs.view || prefs.startView
-  : prefs.startView;
+let currentView = prefs.restoreLastView ? prefs.view || prefs.startView : prefs.startView;
 let yearMode = prefs.yearMode || false;
 
 /* === HELPER: Safe event binding === */
@@ -110,7 +110,6 @@ function refreshViews() {
   const views = ['dashboardView', 'monthView', 'yearView', 'tableView'];
   views.forEach((v) => (document.getElementById(v).style.display = 'none'));
 
-  
   if (typeof updateAppShellUI === 'function') updateAppShellUI();
 
   const factoryEditorIsActive =
@@ -215,13 +214,13 @@ window.goToPeriod = goToPeriod;
 
 /* === KEYBOARD === */
 document.addEventListener('keydown', (e) => {
-if (
-      e.target.tagName === 'INPUT' ||
-      e.target.tagName === 'SELECT' ||
-      e.target.tagName === 'TEXTAREA'
-    )
+  if (
+    e.target.tagName === 'INPUT' ||
+    e.target.tagName === 'SELECT' ||
+    e.target.tagName === 'TEXTAREA'
+  )
     return;
-  
+
   // Handle factory painting mode keyboard shortcuts
   const paintOn =
     (typeof factoryPaintActive !== 'undefined' && factoryPaintActive) ||
@@ -308,7 +307,11 @@ document.addEventListener(
 document.addEventListener('touchend', (e) => {
   if (currentView !== 'month') return;
   // Ignore swipes that started inside a horizontal scroller
-  if (touchStartTarget && touchStartTarget.closest && touchStartTarget.closest('.table-scroll, .dash-upcoming-list')) {
+  if (
+    touchStartTarget &&
+    touchStartTarget.closest &&
+    touchStartTarget.closest('.table-scroll, .dash-upcoming-list')
+  ) {
     return;
   }
   const dx = e.changedTouches[0].clientX - touchStartX;
@@ -334,20 +337,20 @@ document.querySelectorAll('.shift-btn').forEach((btn) => {
 
 /* === TODAY === */
 bindClick('todayBtn', () => {
-      // Prevent today button when in factory painting mode
-      if (factoryPaintActive) return;
-      
-      const now = new Date();
-      currentYear = now.getFullYear();
-      currentMonth = now.getMonth() + 1;
-      selectedDay = now.getDate(); // select today
-      yearMode = false;
-      prefs.year = currentYear;
-      prefs.yearMode = false;
-      savePrefs(prefs);
-      switchView('month'); // always open Month view on today's date
-    });
- 
+  // Prevent today button when in factory painting mode
+  if (factoryPaintActive) return;
+
+  const now = new Date();
+  currentYear = now.getFullYear();
+  currentMonth = now.getMonth() + 1;
+  selectedDay = now.getDate(); // select today
+  yearMode = false;
+  prefs.year = currentYear;
+  prefs.yearMode = false;
+  savePrefs(prefs);
+  switchView('month'); // always open Month view on today's date
+});
+
 /* === AUTH LOSS HANDLING === */
 // Handle loss of admin authentication while in factory painting mode
 if (typeof window !== 'undefined') {
@@ -422,4 +425,3 @@ applyTranslations();
 /* === PERSONALIZATION (cell colors) === */
 if (typeof applyPersonalization === 'function') applyPersonalization();
 else if (typeof applyCellColors === 'function') applyCellColors();
-
